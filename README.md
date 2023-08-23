@@ -1,1 +1,1 @@
-Check out my small project on Comparining NPM Download Stats for Packages [here](./compare-npm-download-stats/index.html).
+Check out my small project on Comparining NPM Download Stats for Packages [here](https://manojmohangit.github.io/compare-npm-download-stats/).
