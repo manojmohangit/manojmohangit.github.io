@@ -1,7 +1,7 @@
 <html>
     <head>
         <title>
-            Demo
+            Manoj Mohan - Github Page
         </title>
         <script>
             window.addEventListener("load", function(e) {
@@ -10,15 +10,16 @@
                 animateTextNode.forEach(function(node) {
                     var animateText = node.innerText.split("");
                     node.innerText = "";
+                    console.log(animateText)
                     animateText.forEach(function(el, index){
-                    var spanText = document.createElement("SPAN");
-                    spanText.innerText = el;
-                    node.appendChild(spanText);
-                    setTimeout(function(){
-                    spanText.className = "animate";
-                    countTextToAnimate += 1;
-                    spanText.style.transitionDuration = (.5 + 0.2 * countTextToAnimate) + "s";
-                    }, 0)
+                        var spanText = document.createElement("SPAN");
+                        spanText.innerHTML = el === " " ? "&nbsp;" : el;
+                        node.appendChild(spanText);
+                        setTimeout(function(){
+                            spanText.className = "animate";
+                            countTextToAnimate += 1;
+                            spanText.style.transitionDuration = (0.1 * countTextToAnimate) + "s";
+                        }, 0)
                     });  
 
                 });
@@ -47,12 +48,19 @@
                 font-size: 44px;
                 color: #156565;
             }
+            .coming-soon .caption {
+                font-size: 18px;
+            }
         </style>
     </head>
     <body>
         <div class="coming-soon">
-            <div class="animate-text">Coming</div>
-            <div class="animate-text">Soon...</div>
+            <div class="animate-text">Under Development...</div>
+            <br/>
+            <div class="caption">
+                Meanwhile, you can check out my small project to <strong>Compare NPM Download Stats</strong> over <a href="./compare-npm-download-stats/index.html">here</a>
+            </div>
         </div>
+
     </body>
 </html>

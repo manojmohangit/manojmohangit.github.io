@@ -1,2 +1,1 @@
-# manojmani07.github.io
-
+Check out my small project on Comparining NPM Download Stats for Packages [here](./compare-npm-download-stats/index.html).
