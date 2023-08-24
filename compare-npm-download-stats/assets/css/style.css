@@ -36,3 +36,8 @@ body {
 .overflow-x-auto::-webkit-scrollbar-thumb:hover {
     background: #bdbbbb;
 }
+
+#container {
+    max-width: 750px;
+    width: 95%;
+}
