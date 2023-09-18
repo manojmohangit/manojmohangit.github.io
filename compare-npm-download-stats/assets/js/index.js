@@ -48,7 +48,7 @@ window.onload = function() {
                         total += e.entries[i].dataPoint.y;
                     }
 				for (var i = 0; i < e.entries.length; i++) {
-					content += "<span style='color:" + e.entries[i].dataSeries.color + ";'>" + e.entries[i].dataSeries.name + "</span> " + "<strong>" + e.entries[i].dataPoint.y + "</strong> " + (e.entries.length > 1 ? ("(" + parseFloat((e.entries[i].dataPoint.y / total) * 100).toFixed(2) + "%)") : "");
+					content += "<span style='color:" + e.entries[i].dataSeries.color + ";'>" + e.entries[i].dataSeries.name + "</span> " + e.entries[i].dataPoint.y + (e.entries.length > 1 && total != 0 ? (" (" + parseFloat((e.entries[i].dataPoint.y / total) * 100).toFixed(2) + "%)") : "");
 					content += "<br/>";
 				}
                 content += e.entries.length > 1 ? ("Total: " + total + "<br/>") : "";
