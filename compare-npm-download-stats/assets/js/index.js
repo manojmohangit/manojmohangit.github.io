@@ -9,6 +9,20 @@ window.onload = function() {
     var errorDom = $("#error-text");
     var NPM_API_URL = "https://api.npmjs.org/downloads/range/";
     var NPM_DATE_FORMAT = "yy-mm-dd";
+
+    var intialSubtitleOption = [{
+        text: "Add package to compare Download Stats",
+        padding: 10,
+        fontFamily: "'Lato', sans-serif",
+        verticalAlign: "center",
+        horizontalAlign: "center",
+        fontSize: 20
+    }];
+    var chartTitleOption = {
+        text: "NPM Download Stats",
+        padding: 10,
+        fontFamily: "'Lato', sans-serif"
+    };
     
     var dataOptions = [];
     var chartOptions = {
@@ -19,6 +33,11 @@ window.onload = function() {
             padding: 10,
             fontFamily: "'Lato', sans-serif"
         },
+        subtitles: [{
+            text: "Add package to compare Download Stats",
+            padding: 10,
+            fontFamily: "'Lato', sans-serif"
+        }],
         axisX: {
             crosshair: {
                 enabled: true,
@@ -70,6 +89,7 @@ window.onload = function() {
         getAllPackageStats(true);
     } else {
         packageList = [];
+        drawChart();
     }   
 
     async function getAllPackageStats(initial) {
@@ -181,6 +201,17 @@ window.onload = function() {
         }
         
         chart = new CanvasJS.Chart("chartContainer", chartOptions);
+
+        if(chartOptions.data.length != 0 && chartOptions.subtitles != undefined) {
+            chartOptions.subtitles = undefined;
+            chartOptions.title = chartTitleOption;
+            visibleOptions.removeClass("opacity-0");
+        } else if(chartOptions.data.length == 0 && chartOptions.title != undefined) {
+            chartOptions.title = undefined;
+            chartOptions.subtitles = intialSubtitleOption;
+            visibleOptions.addClass("opacity-0");
+        }
+
         chart.render();
     }
 
