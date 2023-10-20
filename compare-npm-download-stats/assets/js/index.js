@@ -9,6 +9,7 @@ window.onload = function() {
     var errorDom = $("#error-text");
     var NPM_API_URL = "https://api.npmjs.org/downloads/range/";
     var NPM_DATE_FORMAT = "yy-mm-dd";
+    var visibleOptions = $(".visible-options .btn");
 
     var intialSubtitleOption = [{
         text: "Add package to compare Download Stats",
@@ -215,7 +216,7 @@ window.onload = function() {
         chart.render();
     }
 
-    var visibleOptions = $(".visible-options .btn");
+    
 
     visibleOptions.on("click", function() {
         visibleOptions.removeClass("active");
