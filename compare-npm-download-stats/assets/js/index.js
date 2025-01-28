@@ -7,9 +7,13 @@ window.onload = function() {
     var startDate = $("#start-date");
     var endDate = $("#end-date");
     var errorDom = $("#error-text");
+    var interval = $("input[name='interval']");
+    var dataRange = $(".range-buttons .btn.active");
     var NPM_API_URL = "https://api.npmjs.org/downloads/range/";
     var NPM_DATE_FORMAT = "yy-mm-dd";
+    var eyeIcon = $(".visible-options .btn .bi");
     var visibleOptions = $(".visible-options .btn");
+    var rangeDataChanged = false;
 
     var intialSubtitleOption = [{
         text: "Add package to compare Download Stats",
@@ -29,6 +33,7 @@ window.onload = function() {
     var chartOptions = {
         theme: "light2",
         animationEnabled: true,
+        zoomEnabled: true,
         title: {
             text: "NPM Download Stats",
             padding: 10,
@@ -55,14 +60,19 @@ window.onload = function() {
                     e.dataSeries.visible = true;
                 }
                 visibleOptions.removeClass("active");
+                eyeIcon.removeClass("bi-eye-slash");
+                
                 e.chart.render();
             }
         },
         toolTip: {
             shared: true,
+            cornerRadius: 10,
+            fontFamily: "'Lato', sans-serif",
+            borderColor: "#f3f3f3",
             contentFormatter: function(e) {
                 var content = " ", total = 0;
-                content += CanvasJS.formatDate(e.entries[0].dataPoint.x, "MMM DD YYYY") + "<br/>";
+                content += "<div class='mb-1 p-0 fw-bold'>" + CanvasJS.formatDate(e.entries[0].dataPoint.x, "MMM DD YYYY") + "</div>";
                 if(e.entries.length > 1)
                     for (var i = 0; i < e.entries.length; i++) {
                         total += e.entries[i].dataPoint.y;
@@ -71,7 +81,7 @@ window.onload = function() {
 					content += "<span style='color:" + e.entries[i].dataSeries.color + ";'>" + e.entries[i].dataSeries.name + "</span> " + e.entries[i].dataPoint.y + (e.entries.length > 1 && total != 0 ? (" (" + parseFloat((e.entries[i].dataPoint.y / total) * 100).toFixed(2) + "%)") : "");
 					content += "<br/>";
 				}
-                content += e.entries.length > 1 ? ("Total: " + total + "<br/>") : "";
+                content += e.entries.length > 1 ? ("<div class='mt-2 fw-bold'>Total: " + total + "</div>") : "";
 				return content;
             }
         },
@@ -94,8 +104,11 @@ window.onload = function() {
     }   
 
     async function getAllPackageStats(initial) {
+        dataOptions.length = 0;
+        drawChart();
         await Promise.all(packageList.map(async (pkg) => {
-            initial && packageToTrack.append(packageCard(pkg).dom())
+            typeof initial === "boolean" & initial && packageToTrack.append(packageCard(pkg).dom())
+            console.log(dataOptions)
             dataOptions.push({
                 type: "spline",
                 name: pkg,
@@ -112,7 +125,15 @@ window.onload = function() {
         return $.datepicker.formatDate(NPM_DATE_FORMAT, new Date(dateStr));
     }
 
+    function getDataRange() {
+        if(rangeDataChanged) {
+            startDate.datepicker("setDate", new Date(new Date(endDate.val()) - dataRange.data("range") * 30 * 24 * 60 * 60 * 1000))
+            rangeDataChanged = false;
+        }
+    }
+
     async function getPackageData(packageName) {
+        getDataRange();
         let npmResponse = await fetch( `${NPM_API_URL}${formatDateforNPM(new Date(startDate.val()))}:${formatDateforNPM(new Date(endDate.val()))}/${encodeURIComponent(packageName)}` );
         if(npmResponse.status != 200) 
             throw new Error(`Response from NPM is ${npmResponse.status}`);
@@ -127,7 +148,50 @@ window.onload = function() {
                 dataPoints: []
             }) - 1];
         }
-        data[0].dataPoints = npmResponseData.downloads.map(data => ({ y: data.downloads, x: new Date(data.day)}))
+
+        switch(interval.val()) {
+            case "week" : 
+                data[0].dataPoints = npmResponseData.downloads.reduce((weeklyData, npmData) => {
+                    if(weeklyData.length == 0 || new Date(npmData.day).getDay() == 0) {
+                        var currentDate = new Date(npmData.day);
+                        var nextWeekend = Math.min(currentDate.getTime() + ( 6 - currentDate.getDay()) * 24 * 60 * 60 * 1000, new Date(endDate.val()).getTime());
+                        let toolTipContent = "";
+                        if(data[0].name == dataOptions[0].name) {
+                            toolTipContent = "<div class='mb-1 p-0 fw-bold'>" + CanvasJS.formatDate(currentDate, "DD MMM") + " - " + CanvasJS.formatDate(nextWeekend, "DD MMM") + "</div> <span style='\"'color: {color};'\"'>{name}</span>: {y}";
+                        } else {
+                            toolTipContent = "<span style='\"'color: {color};'\"'>{name}</span>: {y}";
+                        }
+                        
+                        weeklyData.push({x: currentDate, y: npmData.downloads, toolTipContent: toolTipContent == "" ? undefined : toolTipContent});
+                        
+                    } else {
+                        weeklyData[weeklyData.length-1].y += npmData.downloads;
+                    }
+                    return weeklyData;
+                }, []);
+                break;
+            case "month":
+                data[0].dataPoints = npmResponseData.downloads.reduce((weeklyData, npmData) => {
+                    if(weeklyData.length == 0 || new Date(npmData.day).getDate() == 1) {
+                        var currentDate = new Date(npmData.day);
+                        let toolTipContent = "";
+                        if(data[0].name == dataOptions[0].name) {
+                            toolTipContent = CanvasJS.formatDate(currentDate, "MMM, YY") + "<br/> <span style='\"'color: {color};'\"'>{name}</span>: {y}";
+                        } else {
+                            toolTipContent = "<span style='\"'color: {color};'\"'>{name}</span>: {y}";
+                        }
+                        
+                        weeklyData.push({x: currentDate, y: npmData.downloads, toolTipContent: toolTipContent == "" ? undefined : toolTipContent});
+                        
+                    } else {
+                        weeklyData[weeklyData.length-1].y += npmData.downloads;
+                    }
+                    return weeklyData;
+                }, []);
+                break;
+            default:
+                data[0].dataPoints = npmResponseData.downloads.map(data => ({ y: data.downloads, x: new Date(data.day)}))
+        }
     }
 
     function showError(errorMessage) {
@@ -142,6 +206,7 @@ window.onload = function() {
     async function formSubmit(e) {
         // prevent refreshing the page
         e.preventDefault();
+        
         var packageElement =  packageCard(packageName.val())
         
         if(packageList.filter((pkgName) => packageName.val() === pkgName).length > 0) {
@@ -206,35 +271,60 @@ window.onload = function() {
         if(chartOptions.data.length != 0 && chartOptions.subtitles != undefined) {
             chartOptions.subtitles = undefined;
             chartOptions.title = chartTitleOption;
-            visibleOptions.removeClass("opacity-0");
         } else if(chartOptions.data.length == 0 && chartOptions.title != undefined) {
             chartOptions.title = undefined;
             chartOptions.subtitles = intialSubtitleOption;
-            visibleOptions.addClass("opacity-0");
+            if(packageList.length != 0) {
+                chartOptions.subtitles[0].text = "Loading Data. Please Wait..."
+            } else {
+                chartOptions.subtitles[0].text = "Add package to compare Download Stats"
+            }
         }
 
         chart.render();
     }
 
-    
 
-    visibleOptions.on("click", function() {
-        visibleOptions.removeClass("active");
-    });
-
-    $("#showAllSeries").on("click", function(e) {
-        !jQuery(e.target).hasClass("active") && jQuery(e.target).addClass("active");
+    visibleOptions.on("click", function(e) {
+        var hideSeries = false;
+        jQuery(this).toggleClass("active");
+        if(jQuery(this).hasClass("active")) {
+            hideSeries = true;
+            eyeIcon.addClass("bi-eye-slash");
+        } else {
+            eyeIcon.removeClass("bi-eye-slash");
+        }
+        
         chart.options.data.forEach(data => {
-            data.visible = true;
+            data.visible = !hideSeries;
         })
         chart.render();
     });
 
-    $("#hideAllSeries").on("click", function(e) {
-        !jQuery(e.target).hasClass("active") && jQuery(e.target).addClass("active");
-        chart.options.data.forEach(data => {
-            data.visible = false;
-        })
-        chart.render();
+    $("input[name='interval']").on("change", function(e) {
+        interval = $(this);
+        getAllPackageStats();
+    })
+
+    $(".range-buttons .btn").on("click", function(e) {
+        rangeDataChanged = true;
+        
+        $(".range-buttons .btn").removeClass("active");
+        dataRange = $(this);
+        $(this).addClass("active");
+        getAllPackageStats();
+        
+    })
+
+    startDate.on("change", function() {
+        endDate.datepicker("option", "minDate", startDate.val());
+        getAllPackageStats();
     });
+    endDate.on("change", function() {
+        startDate.datepicker("option", "maxDate", endDate.val());
+        getAllPackageStats();
+    });
+
+    endDate.datepicker("option", "minDate", startDate.val());
+    startDate.datepicker("option", "maxDate", endDate.val());
 }

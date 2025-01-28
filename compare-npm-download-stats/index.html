@@ -19,24 +19,12 @@
             <div id="error-text" class="card card-shadow p-3">
             </div>
         </div>
-        <form class="my-5" id="npm-trend-form">
+        <form class="my-3" id="npm-trend-form">
             <div class="row g-2">
                 <div class="col-md">
                     <div class="form-floating">
                         <input type="text" name="package-name" id="package-name" class="form-control" />
                         <label for="floatingInputGrid">Package Name</label>
-                    </div>
-                </div>
-                <div class="col-md">
-                    <div class="form-floating">
-                        <input type="text" name="start-date" id="start-date" class="datepicker form-control" />
-                        <label for="floatingInputGrid">Start Date</label>
-                    </div>
-                </div>
-                <div class="col-md">
-                    <div class="form-floating">
-                        <input type="text" name="end-date" id="end-date" class="datepicker form-control" />
-                        <label for="floatingInputGrid">End Date</label>
                     </div>
                 </div>
                 <div class="col-md">
@@ -46,17 +34,43 @@
                 </div>
             </div>
         </form>
-        <div class="overflow-x-auto mb-5 text-center">
+        <div class="overflow-x-auto mb-3 text-center">
             <div id="package-to-track" class="d-flex w-100 justify-content-start align-items-center align-content-start mb-2"></div>
         </div>
         
-        <div class="p-5 shadow-lg position-relative" id="container">
-            <div class="position-absolute visible-options" role="group" aria-label="Hiding & Showing DataSeries" style="top: 10px;z-index: 1;right: 20px;">
-                <button id="hideAllSeries" type="button" class="btn btn-outline-secondary opacity-0">Hide All</button>
-                <button id="showAllSeries" type="button" class="btn btn-outline-info active opacity-0">Show All</button>
+        <div class="p-3 shadow-lg position-relative rounded" id="container">
+            <div class="d-flex visible-options mr-5 ml-auto" role="group" aria-label="Hiding & Showing DataSeries">
+                <button id="toggleSeriesVisibility" type="button" class="btn btn-sm btn-outline-secondary ml-auto rounded-5"><i class="bi bi-eye-fill"></i></button>
             </div>
-            <div id="chartContainer" class="overflow-hidden mt-2" style="height: 400px; margin: auto;">
+            <div class="d-flex justify-content-between range-selector mt-3">
+                <div class="rounded p-2 w-auto range-buttons">
+                    <button class="btn btn-sm btn-outline-secondary active" data-range="1">
+                        1M
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" data-range="6">
+                        6M
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary" data-range="12">
+                        1Y
+                    </button>
+                </div>
+                <div class="p-2 w-auto data-group bg-gradient rounded d-flex align-items-center range-selector">
+                    <span>From</span>
+                    <input type="text" name="start-date" id="start-date" class="datepicker form-control mx-2 py-0 d-inline-block" />
+                    <span>To</span>
+                    <input type="text" name="end-date" id="end-date" class="datepicker form-control py-0  ms-2 d-inline-block" />
+                </div>                
+            </div> 
+            <div class="text-center mt-3">
+                <div class="p-2 rounded d-inline-block">
+                    <input type="radio" name="interval" value="daily" checked> Daily
+                    <input type="radio" name="interval" value="week" class="ms-2"> Weekly
+                    <input type="radio" name="interval" value="month" class="ms-2"> Monthly
+                </div>
             </div>
+            
+            <div id="chartContainer" class="overflow-hidden mt-2" style="height: 400px; margin: auto;"></div>
+            
         </div>
         
     </div>

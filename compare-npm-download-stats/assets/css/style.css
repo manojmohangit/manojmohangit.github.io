@@ -41,3 +41,63 @@ body {
     max-width: 750px;
     width: 95%;
 }
+
+
+.d-flex {
+    display: flex !important;
+}
+.p-2 {
+    padding: .5rem !important
+}
+
+.flex-column {
+    flex-direction: column !important;
+} 
+.justify-content-center {
+    justify-content: center !important;
+}
+
+.align-items-center {
+    align-items: center !important;
+}
+
+.ml-auto {
+    margin-left: auto;
+}
+
+.btn-outline-light {
+    background: #f5f3f3;
+    color: grey;
+
+}
+
+.btn-outline-light:hover,
+.btn-outline-light:focus {
+    color: #000;
+    background-color: #f5f3f3;
+}
+
+.btn-outline-light.active {
+    background: #fff;
+    border-color: #f3f3f3;
+}
+
+.bg-grey {
+    background: #f5f3f3;
+}
+
+.range-selector input {
+    max-width: 120px;
+}
+
+#chartContainer .canvasjs-chart-tooltip > div {
+    padding: 12px !important;
+}
+
+.fw-bold {
+    font-weight: bold !important;
+}
+
+.rounded {
+    border-radius: 4px;
+}
