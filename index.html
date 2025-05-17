@@ -1,66 +1,288 @@
-<html>
-    <head>
-        <title>
-            Manoj Mohan - Github Page
-        </title>
-        <script>
-            window.addEventListener("load", function(e) {
-                var animateTextNode = Array.prototype.slice.call(document.getElementsByClassName("animate-text"));
-                var countTextToAnimate = 0;
-                animateTextNode.forEach(function(node) {
-                    var animateText = node.innerText.split("");
-                    node.innerText = "";
-                    console.log(animateText)
-                    animateText.forEach(function(el, index){
-                        var spanText = document.createElement("SPAN");
-                        spanText.innerHTML = el === " " ? "&nbsp;" : el;
-                        node.appendChild(spanText);
-                        setTimeout(function(){
-                            spanText.className = "animate";
-                            countTextToAnimate += 1;
-                            spanText.style.transitionDuration = (0.1 * countTextToAnimate) + "s";
-                        }, 0)
-                    });  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Manoj Mohan wroking as Senior Software Developer specializing in data visualization tool, WordPress, server management, chart integration and task automation">
+  <meta name="keywords" content="software developer, CanvasJS, WordPress, React, Angular">
+  <meta name="author" content="Your Name">
+  <title>Manoj Mohan - Senior Software Developer @ CanvasJS</title>
+  <link rel="stylesheet" href="/assets/css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+</head>
+<body class="bg-gray-900 text-white font-sans">
+  <!-- Navbar -->
+  <nav id="navbar" class="fixed top-0 w-full glass z-10">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="#home" class="text-2xl font-bold">MM</a>
+      <div class="space-x-4">
+        <a href="#home" class="hover:text-blue-400 transition">Home</a>
+        <a href="#about" class="hover:text-blue-400 transition">About</a>
+        <a href="#projects" class="hover:text-blue-400 transition">Projects</a>
+        <a href="#blog" class="hover:text-blue-400 transition">Blog</a>
+        <a href="#contact" class="hover:text-blue-400 transition">Contact</a>
+      </div>
+    </div>
+  </nav>
 
-                });
-           })
-        </script>
-        <style>
-            body {
-                margin: 0px;
-            }
-            .animate-text span  {
-                display: inline-block;
-                transform: translateY(50px);
-            }
 
-            .animate-text span.animate {
-                transform: translateY(0px);
-            }
-            .animate-text {
-                display: inline-block;
-            }
-            .coming-soon {
-                text-align: center;
-                width: 100%;
-                position: absolute;
-                top: 40%;
-                font-size: 44px;
-                color: #156565;
-            }
-            .coming-soon .caption {
-                font-size: 18px;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="coming-soon">
-            <div class="animate-text">Under Development...</div>
-            <br/>
-            <div class="caption">
-                Meanwhile, you can check out my small project to <strong>Compare NPM Download Stats</strong> over <a href="./compare-npm-download-stats/">here</a>
-            </div>
+  <section id="home" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-800 to-blue-900">
+    <div class="container mx-auto px-4 max-w-4xl flex flex-col md:flex-row items-center justify-between"> <!-- Reduced max-width to max-w-4xl for a smaller container -->
+      <div class="md:w-3/4 text-center md:text-left">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 fade-in">Hi, I'm Manoj Mohan</h1> <!-- Slightly reduced font size for better fit -->
+        <p class="text-xl md:text-2xl mb-6 fade-in" style="animation-delay: 0.2s;">Senior Software Developer @ CanvasJS </p>
+        <a href="#about" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition fade-in" style="animation-delay: 0.4s;">Learn More</a>
+      </div>
+      <div class="md:w-1/3 mt-8 md:mt-0 flex justify-center md:justify-end">
+        <img src="/assets/img/manoj-mohan.png" alt="Manoj Mohan - Profile Image" class="profile-img">
+      </div>
+    </div>
+  </section>
+  <!-- Hero Section -->
+
+  <!-- About Section -->
+  <section id="about" class="py-20 bg-gray-800 scroll-reveal">
+    <div class="container mx-auto px-4">
+      <h2 class="text-4xl font-bold text-center mb-12">About Me</h2>
+      <div class="flex flex-col md:flex-row gap-8 max-w-5xl mx-auto">
+        <!-- Who I Am -->
+        <div class="md:w-1/2">
+          <h3 class="text-2xl font-semibold mb-4">Who I Am</h3>
+          <p class="text-lg mb-4">
+            I'm a Senior Software Developer at CanvasJS, with over 8 years of experience crafting innovative web solutions that bridge technology and user needs. I specialize in data visualization, seamlessly integrating CanvasJS charts into modern frameworks like React and Angular to create dynamic, user-friendly experiences. My expertise extends to full-stack development, where I've built custom WordPress plugins, designed robust APIs, and implemented efficient server management solutions.
+          </p>
+          <p class="text-lg mb-4">
+            Driven by a passion for problem-solving, I thrive on turning complex challenges into elegant, scalable solutions. Beyond coding, I’m a knowledge-sharer at heart—my technical blogs on dev.to and Medium reflect my commitment to helping others grow in the ever-evolving tech landscape.
+          </p>
+          <div class="flex space-x-4 mt-6">
+            <a href="https://github.com/manojmohangit" target="_blank" class="social-btn github">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.083-.729.083-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.3 24 12 24 5.37 18.63 0 12 0z"/>
+              </svg>
+            </a>
+            <a href="https://www.linkedin.com/in/manumani07/" target="_blank" class="social-btn linkedin">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-9h3v9zm-1.5-10.5c-.966 0-1.75-.784-1.75-1.75s.784-1.75 1.75-1.75 1.75.784 1.75 1.75-.784 1.75-1.75 1.75zm13.5 10.5h-3v-5.5c0-1.378-1.122-2.5-2.5-2.5s-2.5 1.122-2.5 2.5v5.5h-3v-9h3v1.378c.72-.858 1.966-1.378 3.5-1.378 2.484 0 4.5 2.016 4.5 4.5v4.5z"/>
+              </svg>
+            </a>
+            <a href="https://dev.to/manoj_004d" target="_blank" class="social-btn devto">
+              <svg viewBox="0 0 235 234" fill="white" version="1.1" width="20" height="20" class="rainbow-logo"
+                preserveAspectRatio="xMinYMin meet">
+              <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                <g id="80K">
+                  <polygon id="Shape" fill="#88AEDC" points="234.04 175.67 158.35 233.95 205.53 233.95 234.04 212"></polygon>
+                  <polygon id="Shape" points="234.04 140.06 112.11 233.95 112.13 233.95 234.04 140.08"></polygon>
+                  <polygon id="Shape" points="133.25 0.95 0.04 103.51 0.04 103.53 133.27 0.95"></polygon>
+                  <polygon id="Shape" fill="#F58F8E" fill-rule="nonzero" points="0.04 0.95 0.04 31.11 39.21 0.95"></polygon>
+                  <polygon id="Shape" fill="#FEE18A" fill-rule="nonzero" points="39.21 0.95 0.04 31.11 0.04 67.01 85.84 0.95"></polygon>
+                  <polygon id="Shape" fill="#F3F095" fill-rule="nonzero" points="85.84 0.95 0.04 67.01 0.04 103.51 133.25 0.95"></polygon>
+                  <polygon id="Shape" fill="#55C1AE" fill-rule="nonzero" points="133.27 0.95 0.04 103.53 0.04 139.12 179.49 0.95"></polygon>
+                  <polygon id="Shape" fill="#F7B3CE" fill-rule="nonzero" points="234.04 0.95 226.67 0.95 0.04 175.45 0.04 211.38 234.04 31.2"></polygon>
+                  <polygon id="Shape" fill="#88AEDC" fill-rule="nonzero" points="179.49 0.95 0.04 139.12 0.04 175.45 226.67 0.95"></polygon>
+                  <polygon id="Shape" fill="#F58F8E" fill-rule="nonzero" points="234.04 31.2 0.04 211.38 0.04 233.95 18.07 233.95 234.04 67.65"></polygon>
+                  <polygon id="Shape" fill="#FEE18A" fill-rule="nonzero" points="234.04 67.65 18.07 233.95 64.7 233.95 234.04 103.56"></polygon>
+                  <polygon id="Shape" fill="#F3F095" fill-rule="nonzero" points="234.04 103.56 64.7 233.95 112.11 233.95 234.04 140.06"></polygon>
+                  <polygon id="Shape" fill="#55C1AE" fill-rule="nonzero" points="234.04 140.08 112.13 233.95 158.35 233.95 234.04 175.67"></polygon>
+                  <polygon id="Shape" fill="#F7B3CE" fill-rule="nonzero" points="234.04 212 205.53 233.95 234.04 233.95"></polygon>
+                  <g id="Group" transform="translate(37.000000, 77.000000)" fill="#FFFFFF">
+                    <path d="M28.2371517,0.75 C32.7510836,1.7 36.0111455,3.55 39.371517,7.05 C42.4309598,10.25 44.3368421,13.9 45.1393189,18 C45.7913313,21.45 45.7913313,58.55 45.1393189,62.05 C43.4340557,71.15 35.6600619,78.25 26.0303406,79.5 C24.0241486,79.75 17.3034056,80 11.1845201,80 L-7.10542736e-15,80 L-7.10542736e-15,1.42108547e-14 L12.4383901,1.42108547e-14 C21.2656347,1.42108547e-14 25.7795666,0.2 28.2371517,0.75 Z M14.5448916,40 L14.5448916,65.6 L19.7108359,65.4 C24.174613,65.25 25.1275542,65.05 27.1337461,63.9 C31.0458204,61.6 31.0959752,61.45 31.0959752,39.7 C31.0959752,18.5 31.0959752,18.5 27.4346749,16.1 C25.6291022,14.9 24.8767802,14.75 19.9616099,14.55 L14.5448916,14.4 L14.5448916,40 Z"
+                          id="Combined-Shape"></path>
+                    <path d="M93.7894737,7.25 L93.7894737,14.5 L68.2105263,14.5 L68.2105263,32.5 L83.7585139,32.5 L83.7585139,47 L68.2105263,47 L68.3108359,56.1 L68.4613003,65.25 L81.1504644,65.4 L93.7894737,65.5 L93.7894737,80 L78.993808,80 C62.5430341,80 59.9851393,79.7 57.3770898,77.4 C53.7157895,74.2 53.9164087,76.25 53.7659443,41.1 C53.6656347,19.2 53.8160991,8.85 54.1671827,7.45 C54.8693498,4.85 57.828483,1.65 60.4365325,0.75 C61.9913313,0.2 65.9034056,0.05 78.1411765,4.26325641e-14 L93.7894737,4.26325641e-14 L93.7894737,7.25 Z"
+                          id="Path"></path>
+                    <path d="M125.437152,28.1 C129.148607,42.35 132.258204,53.7 132.358514,53.35 C132.508978,53 135.668731,40.95 139.430341,26.5 L146.301548,0.25 L154.125697,0.1 C160.043963,7.10542736e-15 162,0.15 162,0.6 C162,1.05 144.64644,66.8 143.643344,70.1 C142.941176,72.4 139.179567,77.1 137.073065,78.35 C134.414861,79.85 130.502786,80.1 128.095356,78.85 C125.9387,77.75 123.079876,74.45 121.625387,71.35 C120.722601,69.45 105.97709,15.35 102.566563,1.35 L102.21548,0 L110.039628,0 C117.713313,0 117.913932,0 118.31517,1.1 C118.515789,1.75 121.725697,13.9 125.437152,28.1 Z"
+                          id="Path"></path>
+                  </g>
+                </g>
+              </g>
+            </svg>
+
+            </a>
+            <a href="https://medium.com/@manojmohandev" target="_blank" class="social-btn medium">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="white">
+                <path d="M2.846 6.887c.03-.295-.083-.586-.303-.784l-2.24-2.7v-.403h6.958l5.378 11.795 4.728-11.795h6.633v.403l-1.916 1.837c-.165.126-.247.333-.213.537v13.498c-.034.204.048.411.213.537l1.871 1.837v.403h-9.412v-.403l1.939-1.882c.19-.19.19-.246.19-.537v-10.91l-5.389 13.688h-.728l-6.275-13.688v9.174c-.052.385.076.774.36 1.06l2.523 3.058v.404h-7.259v-.404l2.525-3.058c.284-.286.412-.675.359-1.06v-10.606z"/>
+              </svg>
+            </a>
+          </div>
         </div>
+        <!-- Professional Journey -->
+        <div class="md:w-1/2">
+          <h3 class="text-2xl font-semibold mb-4">Professional Journey</h3>
+          <div class="space-y-6">
+            <div>
+              <div class="flex items-center">
+                <span class="w-4 h-4 bg-blue-600 rounded-full mr-3"></span>
+                <div>
+                  <h4 class="text-xl font-medium">Senior Software Developer</h4>
+                  <p class="text-lg text-blue-400">CanvasJS (Fenopix Technologies Pvt Ltd)</p>
+                  <p class="text-sm text-gray-400">2022 - Present</p>
+                </div>
+              </div>
+              <p class="text-lg mt-2 ml-7">
+                Enhanced website UI to boost user interaction and performed SEO optimization for better visibility. Integrated HubSpot and Zoho CRM to streamline customer relationship management and marketing workflows. Implemented spam prevention measures and managed Cloudflare administration for improved security and performance.
+              </p>
+            </div>
+            <div>
+              <div class="flex items-center">
+                <span class="w-4 h-4 bg-blue-600 rounded-full mr-3"></span>
+                <div>
+                  <h4 class="text-xl font-medium">Software Developer</h4>
+                  <p class="text-lg text-blue-400">CanvasJS (Fenopix Technologies Pvt Ltd)</p>
+                  <p class="text-sm text-gray-400">2017 - 2022</p>
+                </div>
+              </div>
+              <p class="text-lg mt-2 ml-7">
+                Developed a subscription plugin and PDF invoice generator for streamlined billing processes. Handled server upgrades, task automation, and designed CanvasJS StockChart APIs to sync multiple charts.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    </body>
+  <!-- Projects Section -->
+  <section id="projects" class="py-20 bg-gray-900 scroll-reveal">
+    <div class="container mx-auto px-4">
+      <h2 class="text-4xl font-bold text-center mb-12">Projects</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="project-cards">
+        <!-- Project Card 1 -->
+        <div class="glass p-6 rounded-lg card">
+          <div class="card-content">
+            <div class="content-inner">
+              <h3 class="text-2xl font-semibold mb-2">NPM Stats Analyzer</h3>
+              <p class="text-gray-300 mb-4">Developed a web application that clearly visualizes and compares NPM package download statistics for the past month, 6 months, and year through interactive CanvasJS charts, offering valuable insights into package adoption trends.</p>
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="px-3 py-1 bg-blue-500 text-sm rounded-full">CanvasJS</span>
+                <span class="px-3 py-1 bg-blue-500 text-sm rounded-full">JavaScript</span>
+              </div>
+            </div>
+            <div class="button-group">
+              <a href="https://manojmohan.dev/compare-npm-download-stats/" class="card-btn" target="_blank">View Project</a>
+              <a href="https://github.com/manojmohangit/manojmohangit.github.io/tree/master/compare-npm-download-stats" class="card-btn" target="_blank">View Source Code</a>
+            </div>
+            <!-- <a href="#" class="card-btn px-4 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white transition">View Project</a> -->
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+  <!-- /Projects Section -->
+
+  <!-- Blog Section -->
+  <section id="blog" class="py-20 bg-gray-800 scroll-reveal">
+    <div class="container mx-auto px-4">
+      <h2 class="text-4xl font-bold text-center mb-12">Latest Blog Posts</h2>
+      <div id="blog-posts" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Blog posts will be dynamically inserted here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 bg-gray-900">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-4xl font-bold mb-12">Get in Touch</h2>
+      <p class="text-lg mb-6">Interested in collaborating or have a project in mind? Reach out!</p>
+      <a href="mailto:manoj.mohandev@gmail.com" class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Email Me</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-6 bg-gray-800 text-center">
+    <p>© 2025 Manoj Mohan. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const navbar = document.getElementById('navbar');
+      if (window.scrollY > 50) {
+        navbar.classList.add('visible');
+      } else {
+        navbar.classList.remove('visible');
+      }
+
+      // Scroll reveal for sections
+      const reveals = document.querySelectorAll('.scroll-reveal');
+      reveals.forEach((section) => {
+        const windowHeight = window.innerHeight;
+        const elementTop = section.getBoundingClientRect().top;
+        const elementVisible = 150;
+
+        if (elementTop < windowHeight - elementVisible) {
+          section.classList.add('visible');
+        }
+      });
+    });
+
+    // Function to align card content heights
+    function alignCardHeights(containerId, contentClass) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const contents = container.querySelectorAll(contentClass);
+      let maxHeight = 0;
+
+      // Reset heights to auto to calculate natural height
+      contents.forEach(content => {
+        content.style.height = 'auto';
+        const height = content.offsetHeight;
+        if (height > maxHeight) {
+          maxHeight = height;
+        }
+      });
+
+      // Set all contents to the max height
+      contents.forEach(content => {
+        content.style.height = `${maxHeight}px`;
+      });
+    }
+
+    // Fetch dev.to blog posts and align cards
+    async function fetchBlogPosts() {
+      try {
+        const response = await fetch('https://dev.to/api/articles?username=manoj_004d&per_page=6');
+        const posts = await response.json();
+        const blogContainer = document.getElementById('blog-posts');
+
+        posts.forEach(post => {
+          const card = document.createElement('div');
+          card.className = 'glass p-6 rounded-lg card';
+          card.innerHTML = `
+            <div class="card-content">
+              <div class="content-inner">
+                <h3 class="text-2xl font-semibold mb-2">${post.title}</h3>
+                <p class="text-gray-300 mb-4">${post.description || 'No description available.'}</p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                  ${post.tag_list.map(tag => `<span class="px-3 py-1 bg-blue-500 text-sm rounded-full">${tag}</span>`).join('')}
+                </div>
+              </div>
+              <a href="${post.url}" target="_blank" class="card-btn px-4 py-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-500 hover:text-white transition">Read More >></a>
+            </div>
+          `;
+          blogContainer.appendChild(card);
+        });
+
+        // Align blog card heights after content is loaded
+        alignCardHeights('blog-posts', '.content-inner');
+      } catch (error) {
+        console.error('Error fetching blog posts:', error);
+        document.getElementById('blog-posts').innerHTML = '<p class="text-center text-red-500">Failed to load blog posts. Please try again later.</p>';
+      }
+    }
+
+    // Load blog posts on page load
+    fetchBlogPosts();
+
+    // Align project card heights on page load and window resize
+    window.addEventListener('load', () => {
+      alignCardHeights('project-cards', '.content-inner');
+    });
+    window.addEventListener('resize', () => {
+      alignCardHeights('project-cards', '.content-inner');
+    });
+  </script>
+</body>
 </html>
