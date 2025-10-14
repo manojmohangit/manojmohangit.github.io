@@ -89,8 +89,8 @@ window.onload = function() {
     }
     var chart;
 
-    startDate.datepicker("setDate", "-1m")
-    endDate.datepicker("setDate", "-1")
+    startDate.datepicker("setDate", "-1m");
+    endDate.datepicker("setDate", "-1");
 
     npmTrendForm.on("submit", formSubmit);
 
@@ -108,7 +108,6 @@ window.onload = function() {
         drawChart();
         await Promise.all(packageList.map(async (pkg) => {
             typeof initial === "boolean" & initial && packageToTrack.append(packageCard(pkg).dom())
-            console.log(dataOptions)
             dataOptions.push({
                 type: "spline",
                 name: pkg,
@@ -134,10 +133,65 @@ window.onload = function() {
 
     async function getPackageData(packageName) {
         getDataRange();
-        let npmResponse = await fetch( `${NPM_API_URL}${formatDateforNPM(new Date(startDate.val()))}:${formatDateforNPM(new Date(endDate.val()))}/${encodeURIComponent(packageName)}` );
-        if(npmResponse.status != 200) 
-            throw new Error(`Response from NPM is ${npmResponse.status}`);
-        let npmResponseData = await npmResponse.json();
+
+        var currentStartDate = new Date(startDate.val());
+        var finalDate = new Date(endDate.val());
+        var npmResponse = null;
+        var npmResponseData = null;
+
+        function daysBetween(date1, date2) {
+            const oneDay = 24 * 60 * 60 * 1000;
+            return Math.round(Math.abs((date1 - date2) / oneDay));
+        };
+
+        const totalDays = daysBetween(currentStartDate, finalDate);
+        
+        if (totalDays <= 540) {
+            npmResponse = await fetch( `${NPM_API_URL}${formatDateforNPM(new Date(startDate.val()))}:${formatDateforNPM(new Date(endDate.val()))}/${encodeURIComponent(packageName)}` );
+            if(npmResponse.status != 200) 
+                throw new Error(`Response from NPM is ${npmResponse.status}`);
+            npmResponseData = await npmResponse.json();
+        } else {
+
+            // chunking the request as NPM API only allows max 540 days range
+            while (currentStartDate <= finalDate) {
+                
+                let chunkEnd = new Date(currentStartDate);
+                chunkEnd.setDate(chunkEnd.getDate() + 540);
+                
+                // Don't go beyond final end date
+                if (chunkEnd > finalDate) {
+                    chunkEnd = finalDate;
+                }
+                
+                
+                if (chunkEnd <= currentStartDate) break;
+                
+                let response = await fetch( `${NPM_API_URL}${formatDateforNPM(new Date(currentStartDate))}:${formatDateforNPM(chunkEnd)}/${encodeURIComponent(packageName)}` );
+                    
+                if (!response.ok) {
+                    throw new Error(`Response from NPM is ${response.status}`);
+                }
+                
+                const data = await response.json();
+    
+                if(npmResponseData == null) {
+                    npmResponseData = data;
+                } else {
+                    if (data.downloads && data.downloads.length > 0) {
+                        const uniqueDownloads = data.downloads.filter(download => 
+                            !npmResponseData.downloads.some(existing => existing.day === download.day)
+                        );
+                        npmResponseData.downloads.push(...uniqueDownloads);
+                    }
+                }
+                
+                currentStartDate = new Date(chunkEnd);
+                currentStartDate.setDate(currentStartDate.getDate() + 1);
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+        }
+
         let data = dataOptions.filter(data => data.name === packageName);
         if(data.length == 0) {
             data[0] = dataOptions[dataOptions.push({
@@ -316,7 +370,15 @@ window.onload = function() {
         
     })
 
+    function resetRangeChangeButtons() {
+        if( dataRange && (new Date(endDate.val()).getTime() - new Date(startDate.val()).getTime()) != (dataRange.data("range") * 30 * 24 * 60 * 60 * 1000)) {
+            dataRange.removeClass("active");
+            dataRange = null;
+        }
+    }
+
     startDate.on("change", function() {
+        resetRangeChangeButtons();
         endDate.datepicker("option", "minDate", startDate.val());
         getAllPackageStats();
     });
