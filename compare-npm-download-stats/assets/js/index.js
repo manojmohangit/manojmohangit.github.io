@@ -14,6 +14,11 @@ window.onload = function() {
     var eyeIcon = $(".visible-options .btn .bi");
     var visibleOptions = $(".visible-options .btn");
     var rangeDataChanged = false;
+    var annotationDate = null;
+    var annotationDateInput = jQuery("#annotation-date")
+    var annotationTitleInput = jQuery("#annotation-title")
+    var annotationDescriptionInput = jQuery("#annotation-description")
+    
 
     var intialSubtitleOption = [{
         text: "Add package to compare Download Stats",
@@ -28,6 +33,19 @@ window.onload = function() {
         padding: 10,
         fontFamily: "'Lato', sans-serif"
     };
+
+    var annotationSeries = {
+        type: "scatter",
+        markerType: "circle",
+        markerSize: 0,
+        color: "red",
+        name: "Annotations",
+        indexLabelFontFamily: "bootstrap-icons",
+        indexLabelFontColor: "rgb(13, 110, 253)",
+        showInLegend: false,
+        highlightEnabled: false,
+        dataPoints: []
+    }
     
     var dataOptions = [];
     var chartOptions = {
@@ -70,18 +88,38 @@ window.onload = function() {
             cornerRadius: 10,
             fontFamily: "'Lato', sans-serif",
             borderColor: "#f3f3f3",
+            updated: function(e) {
+                annotationDate = new Date(e.entries[0].xValue);
+            },
             contentFormatter: function(e) {
                 var content = " ", total = 0;
-                content += "<div class='mb-1 p-0 fw-bold'>" + CanvasJS.formatDate(e.entries[0].dataPoint.x, "MMM DD YYYY") + "</div>";
-                if(e.entries.length > 1)
+                var annotationEntries = e.entries.filter(entry => entry.dataSeries.name === "Annotations");
+                e["entries"] = e.entries.filter(entry => {
+                    return entry.dataSeries.name !== "Annotations"
+                });
+                
+                annotationEntries.forEach(annotation => {
+                    content += "<div class='pb-2 mb-2' style='border-bottom: 1px solid #dedede;'><i class='bi bi-sticky me-2 text-primary'></i><span class='fw-bolder'>" + annotation.dataPoint.title + "</span><p class='my-1 text-secondary'>" + annotation.dataPoint.description + "<br/><span class='fst-italic'>" + CanvasJS.formatDate(annotation.dataPoint.x, 'MMM DD, YYYY')+ "</span></p></div>";    
+                });
+
+
+                if(e.entries.length > 0) {
+                    content += "<div class='mb-1 p-0 fw-bold'>" + CanvasJS.formatDate(e.entries[0].dataPoint.x, "MMM DD YYYY") + "</div>";
+                    if(e.entries.length > 1)
+                        for (var i = 0; i < e.entries.length; i++) {
+                            if(e.entries[0].dataSeries.name != "Annotaions")
+                                total += e.entries[i].dataPoint.y;
+                        }
                     for (var i = 0; i < e.entries.length; i++) {
-                        total += e.entries[i].dataPoint.y;
+                        if(e.entries[0].dataSeries.name != "Annotaions") {
+                            content += "<span style='color:" + e.entries[i].dataSeries.color + ";'>" + e.entries[i].dataSeries.name + "</span> " + e.entries[i].dataPoint.y + (e.entries.length > 1 && total != 0 ? (" (" + parseFloat((e.entries[i].dataPoint.y / total) * 100).toFixed(2) + "%)") : "");
+                            content += "<br/>";
+                        }
+                        
                     }
-				for (var i = 0; i < e.entries.length; i++) {
-					content += "<span style='color:" + e.entries[i].dataSeries.color + ";'>" + e.entries[i].dataSeries.name + "</span> " + e.entries[i].dataPoint.y + (e.entries.length > 1 && total != 0 ? (" (" + parseFloat((e.entries[i].dataPoint.y / total) * 100).toFixed(2) + "%)") : "");
-					content += "<br/>";
-				}
-                content += e.entries.length > 1 ? ("<div class='mt-2 fw-bold'>Total: " + total + "</div>") : "";
+                    content += e.entries.length > 1 ? ("<div class='mt-2 fw-bold'>Total: " + total + "</div>") : "";
+                }
+
 				return content;
             }
         },
@@ -95,6 +133,14 @@ window.onload = function() {
     npmTrendForm.on("submit", formSubmit);
 
     var packageList = localStorage.getItem("packageList");
+    var annotationList = localStorage.getItem("annotationList");
+
+    if(annotationList) {
+        annotationList = JSON.parse(annotationList);
+    } else {
+        annotationList = [];
+    }
+
     if(packageList) {
         packageList = JSON.parse(packageList);
         getAllPackageStats(true);
@@ -106,6 +152,7 @@ window.onload = function() {
     async function getAllPackageStats(initial) {
         dataOptions.length = 0;
         drawChart();
+        dataOptions.push(annotationSeries);
         await Promise.all(packageList.map(async (pkg) => {
             typeof initial === "boolean" & initial && packageToTrack.append(packageCard(pkg).dom())
             dataOptions.push({
@@ -117,7 +164,19 @@ window.onload = function() {
             });
             await getPackageData(pkg);
         }));
+
         drawChart();
+        annotationList.forEach(function(annotaion) {
+            annotationSeries.dataPoints.push({
+                x: new Date(annotaion.date - new Date().getTimezoneOffset() * 60000),
+                y: chart.axisY[0].get("viewportMinimum") + 10,
+                title: annotaion.title,
+                description: annotaion.description,
+                indexLabel: "\uf58c"
+            })
+        });
+        setTimeout(() => chart.render(), 1400);
+       
     }
 
     function formatDateforNPM(dateStr) {
@@ -384,9 +443,99 @@ window.onload = function() {
     });
     endDate.on("change", function() {
         startDate.datepicker("option", "maxDate", endDate.val());
+        annotationDateInput.datepicker("option", "maxDate", endDate.val());
         getAllPackageStats();
     });
 
     endDate.datepicker("option", "minDate", startDate.val());
     startDate.datepicker("option", "maxDate", endDate.val());
+    annotationDateInput.datepicker("option", "maxDate", endDate.val());
+    // context menu code
+
+    var contextMenu = document.getElementById("customContextMenu");
+    var annotaionModal = new bootstrap.Modal(document.getElementById('annotation-modal'), {});
+    
+    
+    var msPerDay = 24 * 60 * 60 * 1000;
+
+
+    jQuery("#chartContainer").on('contextmenu', function(e) {
+        var rect = e.target.getBoundingClientRect();
+        var xAxisBounds = chart.axisX[0].get("bounds");
+        var yAxisBounds = chart.axisY[0].get("bounds");
+        
+        // don't show up context menu if clicked outside plot area
+        if(
+           (
+                (e.clientY - rect.top) < yAxisBounds.y1 ||
+                (e.clientY - rect.top) > yAxisBounds.y2 ||
+                (e.clientX - rect.left) < yAxisBounds.x2 ||
+                (e.clientX - rect.left) > xAxisBounds.x2
+           )
+        ) {
+            return;
+        }
+
+        
+        e.preventDefault(); // Prevent default browser menu
+        var menu = document.getElementById("customContextMenu");
+        menu.style.top = e.clientY + "px";
+        menu.style.left = e.clientX + "px";
+        menu.style.display = "block";
+        annotationDateInput.datepicker("setDate", annotationDate)
+        chart.toolTip.hide();
+    });
+
+    // Hide menu on left click outside
+    window.addEventListener('click', function(e) {
+        if (e.target.closest("#chartContainer") === null) {
+            document.getElementById("customContextMenu").style.display = "none";
+        }
+    });
+
+    document.addEventListener("click", function() {
+        contextMenu.style.display = "none";
+    });
+
+    // context menu actions
+    jQuery("#add-annotations").on("click", function(e) {
+        annotaionModal.show();
+    })
+
+
+    
+    jQuery("#annotation-form").on("submit", function(e) {
+        e.preventDefault();
+        var title = jQuery("#annotation-title").val();
+        var description = jQuery("#annotation-description").val();
+        var annotationDate = jQuery("#annotation-date").val();
+
+        annotationSeries.dataPoints.push({
+            x: new Date(annotationDate),
+            y: chart.axisY[0].get("viewportMinimum") + 10,
+            title: title,
+            description: description,
+            indexLabel: "\uf58c"
+        });
+
+        annotationList.push({
+            title: title,
+            description: description,
+            date: new Date(annotationDate).getTime()
+        });
+
+        localStorage.setItem("annotationList", JSON.stringify(annotationList));
+
+        drawChart();
+        
+        // reset form fields
+        annotaionModal.hide();
+        annotationTitleInput.val("");
+        annotationDescriptionInput.val("");
+        annotationDateInput.val("");
+
+        
+    });
+
+
 }
