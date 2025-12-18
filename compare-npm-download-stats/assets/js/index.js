@@ -80,6 +80,9 @@ window.onload = function() {
                 visibleOptions.removeClass("active");
                 eyeIcon.removeClass("bi-eye-slash");
                 
+                // hide annotation series if all other series are hidden
+                annotationSeries.visible = e.chart.data.reduce((visible, data) => data.name != "Annotations" && (e.dataSeries.name == data.name ? e.dataSeries.visible : (data.visible || typeof data.visible === "undefined"))  ? true : visible, false);
+                
                 e.chart.render();
             }
         },
