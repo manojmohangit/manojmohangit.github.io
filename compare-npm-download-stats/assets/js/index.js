@@ -102,7 +102,9 @@ window.onload = function() {
                 });
                 
                 annotationEntries.forEach(annotation => {
-                    content += "<div class='pb-2 mb-2' style='border-bottom: 1px solid #dedede;'><i class='bi bi-sticky me-2 text-primary'></i><span class='fw-bolder'>" + annotation.dataPoint.title + "</span><p class='my-1 text-secondary'>" + annotation.dataPoint.description + "<br/><span class='fst-italic'>" + CanvasJS.formatDate(annotation.dataPoint.x, 'MMM DD, YYYY')+ "</span></p></div>";    
+                    annotation.dataPoint.annotations.forEach(annotationData => {
+                        content += "<div class='pb-2 mb-2' style='border-bottom: 1px solid #dedede;'><i class='bi bi-sticky me-2 text-primary'></i><span class='fw-bolder'>" + annotationData.title + "</span><p class='my-1 text-secondary'>" + annotationData.description + "<br/><span class='fst-italic'>" + CanvasJS.formatDate(annotationData.date, 'MMM DD, YYYY')+ "</span></p></div>";    
+                    });
                 });
 
 
@@ -141,7 +143,7 @@ window.onload = function() {
     if(annotationList) {
         annotationList = JSON.parse(annotationList);
     } else {
-        annotationList = [];
+        annotationList = {};
     }
 
     if(packageList) {
@@ -150,7 +152,22 @@ window.onload = function() {
     } else {
         packageList = [];
         drawChart();
-    }   
+    } 
+    
+    function getAnnotationXValue(annotationDate) {
+        annotationDate = new Date(annotationDate - new Date().getTimezoneOffset() * 60000);
+        var annotationX = annotationDate;
+        
+        switch(interval.val()) {
+            case "week":
+                annotationX = Math.max(new Date(annotationDate.getTime() - annotationDate.getDay() * 24 * 60 * 60 * 1000), new Date(startDate.val()));
+                break;
+            case "month":
+                annotationX = Math.max(new Date(annotationDate.getTime() - (annotationDate.getDate() - 1) * 24 * 60 * 60 * 1000), new Date(startDate.val()));
+                break;
+        }
+        return annotationX;
+    }
 
     async function getAllPackageStats(initial) {
         dataOptions.length = 0;
@@ -167,19 +184,22 @@ window.onload = function() {
             });
             await getPackageData(pkg);
         }));
-
+        annotationSeries.dataPoints = [];
         drawChart();
-        annotationList.forEach(function(annotaion) {
+
+        for (annotationDate in annotationList) {
+            // var annotation = annotationList[annotationDate];
             annotationSeries.dataPoints.push({
-                x: new Date(annotaion.date - new Date().getTimezoneOffset() * 60000),
+                x: getAnnotationXValue(annotationDate),
                 y: chart.axisY[0].get("viewportMinimum") + 10,
-                title: annotaion.title,
-                description: annotaion.description,
+                annotations: annotationList[annotationDate].map(annotation => {
+                    return {...annotation, date: new Date(annotation.date)}
+                }),
                 indexLabel: "\uf58c"
-            })
-        });
-        setTimeout(() => chart.render(), 1400);
-       
+            });
+        }
+
+        setTimeout(() => chart.render(), 1500);
     }
 
     function formatDateforNPM(dateStr) {
@@ -272,7 +292,8 @@ window.onload = function() {
                         var currentDate = new Date(npmData.day);
                         var nextWeekend = Math.min(currentDate.getTime() + ( 6 - currentDate.getDay()) * 24 * 60 * 60 * 1000, new Date(endDate.val()).getTime());
                         let toolTipContent = "";
-                        if(data[0].name == dataOptions[0].name) {
+                        
+                        if(data[0].name == dataOptions[1].name) {
                             toolTipContent = "<div class='mb-1 p-0 fw-bold'>" + CanvasJS.formatDate(currentDate, "DD MMM") + " - " + CanvasJS.formatDate(nextWeekend, "DD MMM") + "</div> <span style='\"'color: {color};'\"'>{name}</span>: {y}";
                         } else {
                             toolTipContent = "<span style='\"'color: {color};'\"'>{name}</span>: {y}";
@@ -291,7 +312,7 @@ window.onload = function() {
                     if(weeklyData.length == 0 || new Date(npmData.day).getDate() == 1) {
                         var currentDate = new Date(npmData.day);
                         let toolTipContent = "";
-                        if(data[0].name == dataOptions[0].name) {
+                        if(data[0].name == dataOptions[1].name) {
                             toolTipContent = CanvasJS.formatDate(currentDate, "MMM, YY") + "<br/> <span style='\"'color: {color};'\"'>{name}</span>: {y}";
                         } else {
                             toolTipContent = "<span style='\"'color: {color};'\"'>{name}</span>: {y}";
@@ -505,23 +526,43 @@ window.onload = function() {
         annotaionModal.show();
     })
 
-
+    var annotationDPObject = null;
     
     jQuery("#annotation-form").on("submit", function(e) {
         e.preventDefault();
         var title = jQuery("#annotation-title").val();
         var description = jQuery("#annotation-description").val();
         var annotationDate = jQuery("#annotation-date").val();
+        var annotationX = getAnnotationXValue(new Date(annotationDate));
 
-        annotationSeries.dataPoints.push({
-            x: new Date(annotationDate),
-            y: chart.axisY[0].get("viewportMinimum") + 10,
-            title: title,
-            description: description,
-            indexLabel: "\uf58c"
+        var annotationDps = annotationSeries.dataPoints.some(annotationDp => {
+            if(annotationDp.x.getTime() == annotationX.getTime()) {
+                annotationDp.annotations.push({
+                    date: new Date(annotationDate),
+                    title: title,
+                    description: description, 
+                })    
+            }
         });
 
-        annotationList.push({
+        if(!annotationDps) {
+            annotationSeries.dataPoints.push({
+                x: annotationX,
+                y: chart.axisY[0].get("viewportMinimum") + 10,
+                indexLabel: "\uf58c",
+                annotations: [{
+                    date: new Date(annotationDate),
+                    title: title,
+                    description: description
+                }]
+            });
+        } 
+
+        if(!annotationList.hasOwnProperty(new Date(annotationDate).getTime())) {
+           annotationList[new Date(annotationDate).getTime()] = [];
+        } 
+
+        annotationList[new Date(annotationDate).getTime()].push({
             title: title,
             description: description,
             date: new Date(annotationDate).getTime()
@@ -539,6 +580,5 @@ window.onload = function() {
 
         
     });
-
-
+    
 }
