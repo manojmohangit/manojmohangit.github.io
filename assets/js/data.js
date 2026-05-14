@@ -7,7 +7,7 @@ const portfolioData = {
         summary: "Specializing in the intersection of high-performance data visualization and scalable cloud infrastructure. 8+ years of engineering robust digital systems at CanvasJS.",
         socials: [
             { name: "GITHUB", link: "https://github.com/manojmohangit", icon: "github" },
-            { name: "LINKEDIN", link: "https://www.linkedin.com/in/manumanui07/", icon: "linkedin" },
+            { name: "LINKEDIN", link: "https://www.linkedin.com/in/manumani07/", icon: "linkedin" },
             { name: "MEDIUM", link: "https://manojmohandev.medium.com/", icon: "medium" },
             { name: "DEV.TO", link: "https://dev.to/manoj_004d", icon: "dev" }
         ],
