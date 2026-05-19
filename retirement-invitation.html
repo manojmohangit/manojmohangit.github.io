@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retirement Celebration - V. Sunil Kumar</title>
+    
+    <meta name="description" content="You are cordially invited to celebrate the retirement and distinguished career of V. Sunil Kumar on May 28, 2026.">
+    <meta property="og:title" content="Retirement Celebration - V. Sunil Kumar">
+    <meta property="og:description" content="Join us in honoring a legacy of dedication and leadership on May 28, 2026 at Anand Restaurant & Banquet, Ankleshwar.">
+    <meta property="og:type" content="website">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="icon" type="image/svg+xml" href="./assets/favicons/invite.svg">
+    <link rel="stylesheet" href="./assets/css/invite.min.css">
+</head>
+
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="audio-control-wrapper no-print">
+        <button class="music-toggle" id="music-toggle-btn" aria-label="Toggle Atmosphere Music">
+            <i class="fa-solid fa-compact-disc"></i>
+        </button>
+        <span class="audio-tooltip" id="audio-tooltip">Play Atmospheric Music</span>
+    </div>
+
+    <div class="envelope-container" id="envelope-screen">
+        <div class="envelope" id="envelope-clicker">
+            <div class="envelope-text">You Are Cordially Invited to the Retirement Party of</div>
+            <div class="envelope-invitee">V. Sunil Kumar</div>
+            <div class="wax-seal" id="seal-trigger"></div>
+            <div class="envelope-text">Click Seal to Open</div>
+        </div>
+    </div>
+
+    <div class="main-wrapper" id="invitation-content">
+        <main class="invitation-card" id="printable-invitation">
+            <svg class="card-corner corner-tl" viewBox="0 0 100 100">
+                <path d="M 0 0 L 100 0 L 100 5 L 5 5 L 5 100 L 0 100 Z" />
+                <path d="M 15 15 L 80 15 L 80 18 L 18 18 L 18 80 L 15 80 Z" />
+                <path d="M 30 30 L 30 50 M 30 30 L 50 30" />
+            </svg>
+            <svg class="card-corner corner-tr" viewBox="0 0 100 100">
+                <path d="M 0 0 L 100 0 L 100 5 L 5 5 L 5 100 L 0 100 Z" />
+                <path d="M 15 15 L 80 15 L 80 18 L 18 18 L 18 80 L 15 80 Z" />
+                <path d="M 30 30 L 30 50 M 30 30 L 50 30" />
+            </svg>
+            <svg class="card-corner corner-bl" viewBox="0 0 100 100">
+                <path d="M 0 0 L 100 0 L 100 5 L 5 5 L 5 100 L 0 100 Z" />
+                <path d="M 15 15 L 80 15 L 80 18 L 18 18 L 18 80 L 15 80 Z" />
+                <path d="M 30 30 L 30 50 M 30 30 L 50 30" />
+            </svg>
+            <svg class="card-corner corner-br" viewBox="0 0 100 100">
+                <path d="M 0 0 L 100 0 L 100 5 L 5 5 L 5 100 L 0 100 Z" />
+                <path d="M 15 15 L 80 15 L 80 18 L 18 18 L 18 80 L 15 80 Z" />
+                <path d="M 30 30 L 30 50 M 30 30 L 50 30" />
+            </svg>
+
+            <div class="inner-border-line"></div>
+
+            <div class="card-honor">Honor, Dedication & Service</div>
+            <h1 class="card-title">YOU ARE CORDIALLY INVITED TO CELEBRATE THE RETIREMENT OF</h1>
+            <div class="retiree-name">V. Sunil Kumar</div>
+
+            <p class="tribute-text">
+                "Please join us in celebrating a distinguished career of dedication, leadership, and outstanding
+                contributions as we honor his retirement and embark on a new chapter of life."
+            </p>
+
+            <div class="ornate-divider">
+                <div class="line"></div>
+                <i class="fa-regular fa-star"></i>
+                <i class="fa-solid fa-certificate"></i>
+                <i class="fa-regular fa-star"></i>
+                <div class="line line-rev"></div>
+            </div>
+
+            <div class="details-container">
+                <div class="detail-item">
+                    <div class="detail-icon"><i class="fa-regular fa-calendar-check"></i></div>
+                    <div class="detail-label">Date & Time</div>
+                    <div class="detail-value">
+                        <strong>Thursday, May 28, 2026</strong><br>
+                        From 7:00 PM - 10:00 PM
+                    </div>
+                </div>
+
+                <div class="detail-item">
+                    <div class="detail-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                    <div class="detail-label">The Venue</div>
+                    <div class="detail-value">
+                        <strong>Anand Restaurant & Banquet</strong><br>
+                        Omkar Complex, Valia Road,<br>GIDC Ankleshwar
+                    </div>
+                    <a href="https://maps.app.goo.gl/6pgmxbhfn3BqZDDSA" target="_blank" class="btn-maps no-print">
+                        <i class="fa-solid fa-diamond-turn-right"></i> Open in Google Maps
+                    </a>
+                </div>
+            </div>
+        </main>
+
+        <section class="countdown-wrapper no-print">
+            <h2 class="countdown-title">Countdown to Celebration</h2>
+            <div class="countdown-grid">
+                <div class="countdown-card">
+                    <div class="countdown-val" id="days">00</div>
+                    <div class="countdown-lbl">Days</div>
+                </div>
+                <div class="countdown-card">
+                    <div class="countdown-val" id="hours">00</div>
+                    <div class="countdown-lbl">Hours</div>
+                </div>
+                <div class="countdown-card">
+                    <div class="countdown-val" id="minutes">00</div>
+                    <div class="countdown-lbl">Minutes</div>
+                </div>
+                <div class="countdown-card">
+                    <div class="countdown-val" id="seconds">00</div>
+                    <div class="countdown-lbl">Seconds</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="./assets/js/invite.min.js"></script>
+</body>
+
+</html>
