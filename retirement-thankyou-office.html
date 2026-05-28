@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>With Sincere Gratitude - V. Sunil Kumar</title>
+
+    <meta name="description"
+        content="A heartfelt thank you page for family, friends, and colleagues who celebrated the retirement of V. Sunil Kumar.">
+    <meta property="og:title" content="With Sincere Gratitude - V. Sunil Kumar">
+    <meta property="og:description"
+        content="Thank you for being part of my retirement celebration and journey. Explore highlights and memories here.">
+    <meta property="og:type" content="website">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="icon" type="image/svg+xml" href="./assets/favicons/invite.svg">
+    <link rel="stylesheet" href="./assets/css/invite.min.css">
+    <link rel="stylesheet" href="./assets/css/thankyou.min.css">
+</head>
+
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="audio-control-wrapper no-print">
+        <button class="music-toggle" id="music-toggle-btn" aria-label="Toggle Atmosphere Music">
+            <i class="fa-solid fa-compact-disc"></i>
+        </button>
+        <span class="audio-tooltip" id="audio-tooltip">Play Celebration Music</span>
+    </div>
+
+    <!-- Envelope Overlay Screen -->
+    <div class="envelope-container" id="envelope-screen">
+        <div class="envelope" id="envelope-clicker">
+            <div class="envelope-text">A Note of Gratitude from</div>
+            <div class="envelope-invitee">V. Sunil Kumar</div>
+            <div class="wax-seal thankyou-seal" id="seal-trigger"></div>
+            <div class="envelope-text">Click Seal to Open</div>
+        </div>
+    </div>
+
+    <!-- Thank You Content -->
+    <div class="main-wrapper" id="invitation-content">
+        <main class="thankyou-card" id="printable-invitation">
+            <svg class="card-corner corner-tl" viewBox="0 0 100 100">
+                <path d="M 0 0 L 100 0 L 100 5 L 5 5 L 5 100 L 0 100 Z" />
+                <path d="M 15 15 L 80 15 L 80 18 L 18 18 L 18 80 L 15 80 Z" />
+                <path d="M 30 30 L 30 50 M 30 30 L 50 30" />
+            </svg>
+            <svg class="card-corner corner-tr" viewBox="0 0 100 100">
+                <path d="M 0 0 L 100 0 L 100 5 L 5 5 L 5 100 L 0 100 Z" />
+                <path d="M 15 15 L 80 15 L 80 18 L 18 18 L 18 80 L 15 80 Z" />
+                <path d="M 30 30 L 30 50 M 30 30 L 50 30" />
+            </svg>
+            <svg class="card-corner corner-bl" viewBox="0 0 100 100">
+                <path d="M 0 0 L 100 0 L 100 5 L 5 5 L 5 100 L 0 100 Z" />
+                <path d="M 15 15 L 80 15 L 80 18 L 18 18 L 18 80 L 15 80 Z" />
+                <path d="M 30 30 L 30 50 M 30 30 L 50 30" />
+            </svg>
+            <svg class="card-corner corner-br" viewBox="0 0 100 100">
+                <path d="M 0 0 L 100 0 L 100 5 L 5 5 L 5 100 L 0 100 Z" />
+                <path d="M 15 15 L 80 15 L 80 18 L 18 18 L 18 80 L 15 80 Z" />
+                <path d="M 30 30 L 30 50 M 30 30 L 50 30" />
+            </svg>
+
+            <div class="inner-border-line"></div>
+
+            <div class="thankyou-monogram">VSK</div>
+            <div class="card-honor">With Sincere Appreciation</div>
+            <h1 class="card-title">A HEARTFELT THANK YOU</h1>
+            <div class="retiree-name">V. Sunil Kumar</div>
+
+            <p class="tribute-text">
+                "With a heart full of gratitude, I thank my dear friends, family, and colleagues for being part of my
+                retirement celebration. Your warm presence, beautiful wishes, and support have made this transition into
+                the next chapter of my life truly memorable."
+            </p>
+
+            <p class="tribute-text hindi-poem"
+                style="font-family: var(--font-serif); font-size: 22px; font-style: normal; margin-top: 15px; margin-bottom: 30px; line-height: 1.8; color: var(--gold-bright);">
+                "विदाई की इस बेला में, मिला आप सबका जो प्यार,<br>
+                सदा रहेगा हृदय में, बनकर मीठी सी याद।<br>
+                मेरी सेवानिवृत्ति के इस पल को खास बनाने के लिए,<br>
+                आप सभी का दिल से आभार।"
+            </p>
+
+            <div class="ornate-divider">
+                <div class="line"></div>
+                <i class="fa-regular fa-star"></i>
+                <i class="fa-solid fa-certificate"></i>
+                <i class="fa-regular fa-star"></i>
+                <div class="line line-rev"></div>
+            </div>
+
+            <p class="tribute-text"
+                style="font-size: 16px; margin: 10px auto; font-style: normal; color: var(--gold-base);">
+                "Though the celebration has concluded, the memories we created will stay with me forever."
+            </p>
+        </main>
+
+
+        <!-- Action Buttons -->
+        <div class="action-bar no-print">
+            <a href="retirement-office-gallery.html" class="btn-action btn-action-primary">
+                <i class="fa-solid fa-images"></i> Full Photo Gallery
+            </a>
+            <a href="retirement-invitation.html" class="btn-action">
+                <i class="fa-solid fa-envelope-open-text"></i> View Invitation
+            </a>
+            <a href="index.html" class="btn-action">
+                <i class="fa-solid fa-house"></i> Return Home
+            </a>
+        </div>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="gallery-lightbox" class="lightbox">
+        <div class="lightbox-content">
+            <button id="lightbox-close" class="lightbox-close">&times;</button>
+            <img id="lightbox-img" src="" alt="Zoomed view">
+            <div id="lightbox-caption" class="lightbox-caption"></div>
+        </div>
+    </div>
+
+    <script src="./assets/js/thankyou.min.js"></script>
+</body>
+
+</html>
