@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Celebration Gallery - V. Sunil Kumar</title>
+
+    <meta name="description"
+        content="A beautiful photo gallery showing highlights and family moments from V. Sunil Kumar's retirement celebration.">
+    <meta property="og:title" content="Family Celebration Gallery - V. Sunil Kumar">
+    <meta property="og:description"
+        content="View and cherish the special family moments from my retirement function. Thank you for being a part of this journey.">
+    <meta property="og:type" content="website">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Montserrat:wght@200;300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="icon" type="image/svg+xml" href="./assets/favicons/invite.svg">
+    <link rel="stylesheet" href="./assets/css/gallery.min.css?v=1.0.0">
+</head>
+
+<body>
+
+    <!-- Ambient background canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="gallery-container">
+        <header class="gallery-header">
+            <div class="gallery-monogram">VSK</div>
+            <h1 class="gallery-main-title">Family Gallery</h1>
+            <p class="gallery-subtitle">Highlights with Family - Retirement Function of V. Sunil Kumar</p>
+            
+            <div class="ornate-divider">
+                <div class="line"></div>
+                <i class="fa-regular fa-star"></i>
+                <i class="fa-solid fa-certificate"></i>
+                <i class="fa-regular fa-star"></i>
+                <div class="line line-rev"></div>
+            </div>
+        </header>
+
+        <!-- Grid of Photo Cards -->
+        <main class="photo-grid" id="photo-grid">
+            <!-- Dynamically populated via family-gallery.min.js -->
+        </main>
+
+        <!-- Navigation / Action Buttons -->
+        <footer class="navigation-bar">
+            <a href="retirement-thankyou-family.html" class="btn-action">
+                <i class="fa-solid fa-heart"></i> Gratitude Note
+            </a>
+            <a href="retirement-invitation.html" class="btn-action">
+                <i class="fa-solid fa-envelope-open-text"></i> View Invitation
+            </a>
+            <a href="index.html" class="btn-action btn-action-primary">
+                <i class="fa-solid fa-house"></i> Return Home
+            </a>
+        </footer>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox">
+        <!-- Close Button -->
+        <button id="btn-close" class="lightbox-btn btn-close" aria-label="Close Gallery Lightbox">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="lightbox-content-wrapper">
+            <!-- Navigation Left -->
+            <button id="btn-prev" class="lightbox-btn btn-prev" aria-label="Previous Image">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+
+            <!-- Active Large Image -->
+            <img id="lightbox-img" class="lightbox-img" src="" alt="Active view">
+
+            <!-- Navigation Right -->
+            <button id="btn-next" class="lightbox-btn btn-next" aria-label="Next Image">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+        </div>
+
+        <div id="lightbox-caption" class="lightbox-caption"></div>
+        <div id="lightbox-counter" class="lightbox-counter"></div>
+    </div>
+
+    <script src="./assets/js/family-gallery.min.js?v=1.0.0"></script>
+</body>
+
+</html>
