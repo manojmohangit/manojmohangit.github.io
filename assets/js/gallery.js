@@ -91,8 +91,8 @@ window.addEventListener('mousemove', (e) => {
 initParticles();
 animate();
 
-// 2. Dynamic Image Grid Generation (127 images)
-const TOTAL_IMAGES = 127;
+// 2. Dynamic Image Grid Generation (134 images)
+const TOTAL_IMAGES = 134;
 const photoGrid = document.getElementById("photo-grid");
 
 // Helper to get formatted or general title for gallery cards
