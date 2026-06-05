@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume - Manoj Mohan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./assets/css/style.min.css">
+    <link rel="stylesheet" href="./assets/css/resume.min.css">
+    <script>document.documentElement.classList.add('js');</script>
+</head>
+
+<body>
+    <div class="bg-grid-overlay"></div>
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a href="index.html" class="logo"><strong>M.</strong>MOHAN</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">HOME</a>
+                <a href="projects.html" class="nav-link">PROJECTS</a>
+                <a href="blog.html" class="nav-link">WRITINGS</a>
+                <a href="certifications.html" class="nav-link">CERTIFICATIONS</a>
+                <a href="resume.html" class="nav-link active">RESUME</a>
+            </div>
+            <button class="theme-btn" id="theme-toggle" aria-label="Toggle Theme">
+                <span class="theme-toggle-knob"></span>
+            </button>
+        </div>
+    </nav>
+
+    <button class="export-btn no-print" onclick="window.print()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        EXPORT TO PDF
+    </button>
+
+    <div class="resume-paper">
+        <header class="header reveal">
+            <div class="header-left">
+                <h1>Manoj Mohan</h1>
+                <p>Senior Software Developer</p>
+                <div style="font-size: 14px; margin-top: 10px;">
+                    Email: <a href="mailto:manoj.mohandev@gmail.com"
+                        style="color: var(--link-color); text-decoration: none;">manoj.mohandev@gmail.com</a>
+                </div>
+            </div>
+            <div class="header-right">
+                <p>Phone: (91) 8123588567</p>
+                <p>LinkedIn: <a href="https://www.linkedin.com/in/manumani07/"
+                        target="_blank">linkedin.com/in/manumani07/</a></p>
+                <p>Web: <a href="https://manojmohan.dev" target="_blank">manojmohan.dev</a></p>
+            </div>
+        </header>
+
+        <section class="reveal">
+            <h2>Professional Summary</h2>
+            <div class="summary">
+                Senior Software Developer with over 8 years of experience building scalable web applications, JavaScript
+                libraries, WordPress plugins, and automation solutions. Proficient in JavaScript, TypeScript, Python,
+                React, and MySQL, with expertise in optimizing performance, designing intuitive APIs, and enhancing
+                security. Delivered impactful projects, including significant improvements in subscription renewals
+                through CRM automation and a substantial reduction in spam via Cloudflare-based security measures.
+                Skilled in full-stack development, UI design, and task automation using Bash and Git. Seeking a
+                challenging role to leverage analytical, coding, and debugging skills to drive innovation and growth
+                with cutting-edge web technologies.
+            </div>
+        </section>
+
+        <section class="reveal">
+            <h2>Experience</h2>
+            <div class="experience-item">
+                <div class="item-header">
+                    <span>Senior Software Developer</span>
+                    <span>Oct 2023 - Present</span>
+                </div>
+                <div class="item-subtitle">CanvasJS (Fenopix Technologies Pvt. Ltd.)</div>
+            </div>
+            <div class="experience-item">
+                <div class="item-header">
+                    <span>Software Developer</span>
+                    <span>Jan 2017 - Aug 2023</span>
+                </div>
+                <div class="item-subtitle">CanvasJS (Fenopix Technologies Pvt. Ltd.)</div>
+            </div>
+        </section>
+
+        <section class="reveal">
+            <h2>Skills</h2>
+            <div class="skills-grid">
+                <p><span class="skills-category">Programming Languages:</span> JavaScript, TypeScript, Python, Bash, PHP
+                </p>
+                <p><span class="skills-category">Tech Stacks:</span> MERN (MongoDB, Express.js, React, Node.js), LAMP
+                    (Linux, Apache, MySQL, PHP), Flask</p>
+                <p><span class="skills-category">Libraries:</span> CanvasJS, CodeMirror, Sass, Bootstrap</p>
+                <p><span class="skills-category">Databases:</span> MySQL, Postgres</p>
+                <p><span class="skills-category">Tools & Technologies:</span> Git, Grunt, Webpack, HyperV, Docker,
+                    Ubuntu CLI, Github Actions</p>
+            </div>
+        </section>
+
+        <section class="reveal">
+            <h2>Projects</h2>
+
+            <div class="project-item">
+                <div class="item-header">Chart Studio</div>
+                <ul>
+                    <li>Developed a low-code visualization platform that bridges the gap between designers and developers, reducing time-to-market for complex dashboards from days to minutes.</li>
+                    <li>Replaced manual chart coding with a schema-driven visual editor featuring real-time data transformations (sampling, aggregation) and smart styling inheritance for synchronized StockCharts.</li>
+                    <li>Enabled instant export of optimized, production-ready HTML and JSON configs, eliminating styling discrepancies and development bottlenecks.</li>
+                </ul>
+            </div>
+
+            <div class="project-item">
+                <div class="item-header">CanvasJS Chart & StockChart Component for React, Angular and Vue</div>
+                <ul>
+                    <li>Developed and optimized scalable, reusable CanvasJS chart components for React, Angular, and Vue
+                        with a modular architecture, enhancing maintainability and consistent performance.</li>
+                    <li>Implemented framework-specific best practices to ensure smooth rendering, high responsiveness
+                        with large datasets, and efficient cross-framework support.</li>
+                </ul>
+            </div>
+
+            <div class="project-item">
+                <div class="item-header">CanvasJS StockChart API</div>
+                <ul>
+                    <li>Drove the end-to-end development of the CanvasJS StockChart API, designing an event-driven
+                        system to power interactive and high-performance financial data visualizations.</li>
+                    <li>Engineered synchronized tooltips and crosshairs for multi-chart visualization, significantly
+                        enhancing data comparison capabilities and improving user data analysis efficiency by 10%.</li>
+                </ul>
+            </div>
+
+            <div class="project-item">
+                <div class="item-header">Website Redesign</div>
+                <ul>
+                    <li>Led a cross-functional team in the comprehensive redesign of the CanvasJS website, ensuring
+                        modern design principles, enhanced user experience, and robust web accessibility standards
+                        (WCAG) for improved site usability and compliance.</li>
+                    <li>Achieved a 90% improvement in website load time by implementing advanced performance
+                        optimization techniques, including critical path rendering and offloading non-critical processes
+                        below the fold.</li>
+                </ul>
+            </div>
+
+            <div class="project-item">
+                <div class="item-header">Subscription & Download Plugin</div>
+                <ul>
+                    <li>Engineered a secure WordPress subscription and download plugin using PHP and MySQL, implementing
+                        robust authentication and authorization mechanisms to enforce business license requirements and
+                        integrated Cloudflare for advanced spam prevention.</li>
+                    <li>Optimized the business workflow for subscription renewals by designing and implementing a custom
+                        WordPress plugin that seamlessly integrated Hubspot and Agile CRM, resulting in an improvement
+                        of over 60% in renewal rates.</li>
+                </ul>
+            </div>
+
+            <div class="project-item">
+                <div class="item-header">PDF Invoice Plugin</div>
+                <ul>
+                    <li>Engineered a custom WordPress Invoice plugin to fully automate secure PDF invoice generation
+                        using mPDF, integrating seamless email delivery and dedicated customer account page access.</li>
+                    <li>Eliminated the need for external licensing and provided greater control over the invoicing
+                        process.</li>
+                </ul>
+            </div>
+
+            <div class="project-item">
+                <div class="item-header">Backup Design & Architecture</div>
+                <ul>
+                    <li>Engineered and deployed a robust backup server solution on Ubuntu, leveraging MySQL master-slave
+                        replication and Bash scripting to ensure continuous data synchronization, reducing potential
+                        downtime by 90%.</li>
+                    <li>Fortified data availability to 99.9% through NFTables firewall rules and SSH restrictions.</li>
+                </ul>
+            </div>
+
+            <div class="project-item">
+                <div class="item-header">Code Editor</div>
+                <ul>
+                    <li>Developed an interactive HTML code editor leveraging CodeMirror and JavaScript, featuring a live
+                        preview via iframe for an instant edit-and-view experience.</li>
+                    <li>Enhanced user engagement by 10% through one-click copy/download functionalities and seamless
+                        JSFiddle integration.</li>
+                </ul>
+            </div>
+
+            <div class="project-item">
+                <div class="item-header">Network Security & Threat Mitigation</div>
+                <ul>
+                    <li>Designed and implemented a multi-layered spam prevention system leveraging Cloudflare CDN,
+                        intelligent rate limiting, and robust iptables firewall rules.</li>
+                    <li>Developed a Python-based in-house monitoring solution resulting in a 95% reduction in spam
+                        incidents.</li>
+                </ul>
+            </div>
+
+            <div class="project-item">
+                <div class="item-header">SEO Auditor Tool</div>
+                <ul>
+                    <li>Developed an in-house SEO Auditor Tool using Flask and Express.js, identifying issues like
+                        broken links and missing meta tags, improving SEO compliance by 70%.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="reveal">
+            <h2>Education</h2>
+            <div class="experience-item">
+                <div class="item-header">
+                    <span>B.E. IN COMPUTER SCIENCE</span>
+                    <span>2012-2016</span>
+                </div>
+                <div class="item-subtitle">RNSIT, BENGALURU | 74.2%</div>
+            </div>
+            <div class="experience-item">
+                <div class="item-header">
+                    <span>HSC, CBSE</span>
+                    <span>2012</span>
+                </div>
+                <div class="item-subtitle">HOLY CROSS, RAIPUR (C.G.) | 83.4%</div>
+            </div>
+            <div class="experience-item">
+                <div class="item-header">
+                    <span>SSC, CGBSE</span>
+                    <span>2010</span>
+                </div>
+                <div class="item-subtitle">ADARSH VIDHYALAYA, RAIPUR (C.G.) | 92.83%</div>
+            </div>
+        </section>
+    </div>
+
+    <script src="./assets/js/data.min.js"></script>
+    <script src="./assets/js/script.min.js"></script>
+</body>
+
+</html>
