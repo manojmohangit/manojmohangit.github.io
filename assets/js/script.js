@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
             item.target = "_blank";
             item.className = 'bento-item reveal';
 
-            const spans = [7, 5, 12];
+            const spans = [7, 5, 5, 7];
             item.style.gridColumn = `span ${spans[index % spans.length]}`;
 
             item.innerHTML = `
