@@ -30,27 +30,34 @@ const portfolioData = {
     projects: [
         {
             id: "01",
+            title: "CERBER CLOUDFLARE SYNC",
+            description: "WordPress plugin that synchronizes IP lockout events triggered by WP Cerber Security to a specified Cloudflare Account IP List for edge-level block mitigation.",
+            tech: ["WORDPRESS", "PHP", "CLOUDFLARE"],
+            link: "https://github.com/manojmohangit/cerber-lockout-cloudflare-sync"
+        },
+        {
+            id: "02",
             title: "MAA SAHELI",
             description: "Maternal health connectivity platform focusing on real-time partner synchronization and health tracking.",
             tech: ["FIREBASE", "FLUTTER"],
             link: "https://maasaheli.manojmohan.dev/"
         },
         {
-            id: "02",
+            id: "03",
             title: "GROCERY HUB",
             description: "Intelligent inventory management system designed to optimize household grocery tracking and planning.",
             tech: ["TYPESCRIPT", "VITE", "REACT"],
             link: "https://groceryhub.manojmohan.dev/"
         },
         {
-            id: "03",
+            id: "04",
             title: "NPM STATS ANALYZER",
             description: "High-density data visualization platform for NPM package telemetry. Built with performance as a primary constraint.",
             tech: ["CANVASJS", "JAVASCRIPT", "REST_API"],
             link: "https://manojmohan.dev/compare-npm-download-stats/"
         },
         {
-            id: "04",
+            id: "05",
             title: "CUSTOM FIELD AUDITOR",
             description: "Enterprise-grade WordPress security utility for post metadata revision tracking and auditing.",
             tech: ["WORDPRESS", "PHP", "MYSQL"],

@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const projectsGrid = document.getElementById('featured-projects');
     if (projectsGrid && data.projects) {
-        data.projects.slice(0, 3).forEach((proj, index) => {
+        data.projects.slice(0, 4).forEach((proj, index) => {
             const item = document.createElement('a');
             item.href = proj.link;
             item.target = "_blank";
