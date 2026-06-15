@@ -109,7 +109,7 @@ function getPhotoTitle(index) {
 // Generate the photo cards
 for (let i = 1; i <= TOTAL_IMAGES; i++) {
     const indexStr = String(i).padStart(3, '0');
-    const imagePath = `./assets/img/retirement-function/retirement-${indexStr}.jpeg`;
+    const imagePath = `../../assets/img/retirement-function/retirement-${indexStr}.jpeg`;
     const title = getPhotoTitle(i - 1);
 
     const card = document.createElement("div");
@@ -162,7 +162,7 @@ function closeLightbox() {
 
 function updateLightboxContent() {
     const indexStr = String(currentActiveIndex).padStart(3, '0');
-    const imagePath = `./assets/img/retirement-function/retirement-${indexStr}.jpeg`;
+    const imagePath = `../../assets/img/retirement-function/retirement-${indexStr}.jpeg`;
     const title = getPhotoTitle(currentActiveIndex - 1);
 
     lightboxImg.src = imagePath;
