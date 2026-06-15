@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 NOT FOUND // MANOJ MOHAN</title>
+
+    <script>
+        (function () {
+            const path = window.location.pathname.toLowerCase();
+            const redirects = {
+                'retirement-invitation.html': '/retirement/',
+                'retirement-gallery.html': '/retirement/gallery.html',
+                'retirement-thankyou.html': '/retirement/thankyou.html',
+                'retirement-family-gallery.html': '/retirement/family/gallery.html',
+                'retirement-thankyou-family.html': '/retirement/family/',
+                'retirement-office-gallery.html': '/retirement/office/gallery.html',
+                'retirement-thankyou-office.html': '/retirement/office/'
+            };
+
+            for (const [key, target] of Object.entries(redirects)) {
+                if (path.endsWith('/' + key) || path === '/' + key) {
+                    window.location.replace(target);
+                    break;
+                }
+            }
+        })();
+    </script>
+
+    <link rel="stylesheet" href="/assets/css/style.min.css">
+    <script>document.documentElement.classList.add('js');</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D7Q3VK3NTD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-D7Q3VK3NTD');
+    </script>
+</head>
+
+<body>
+    <div class="bg-grid-overlay"></div>
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a href="/index.html" class="logo"><strong>M.</strong>MOHAN</a>
+            <div class="nav-links">
+                <a href="/index.html" class="nav-link">HOME</a>
+                <a href="/projects.html" class="nav-link">PROJECTS</a>
+                <a href="/blog.html" class="nav-link">WRITINGS</a>
+                <a href="/certifications.html" class="nav-link">CERTIFICATIONS</a>
+                <a href="/resume.html" class="nav-link">RESUME</a>
+            </div>
+            <button class="theme-btn" id="theme-toggle" aria-label="Toggle Theme">
+                <span class="theme-toggle-knob"></span>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        <header class="section-header container" style="padding-top: 15rem;">
+            <span class="section-label reveal">ERROR // 404</span>
+            <h1 class="section-title reveal">PAGE NOT FOUND</h1>
+        </header>
+
+        <section class="container" style="margin-bottom: 8rem;">
+            <div class="bento-grid">
+                <div class="bento-item reveal active"
+                    style="grid-column: span 12; text-align: center; padding: clamp(3rem, 8vw, 6rem) clamp(1.2rem, 4vw, 2rem); border: 1px solid var(--border);">
+                    <span class="bento-id">#SYSTEM_ERROR</span>
+                    <h3 class="bento-title" style="font-size: clamp(1.3rem, 6vw, 2rem); margin-top: 1.5rem; letter-spacing: -0.02em; word-break: normal; overflow-wrap: break-word;">THE REQUESTED NODE DOES NOT EXIST</h3>
+                    <p class="bento-desc"
+                        style="margin-top: 1.5rem; max-width: 600px; margin-left: auto; margin-right: auto; color: var(--muted); line-height: 1.6;">
+                        The page you are looking for has been relocated, renamed, or deleted. Use the links below to
+                        safely navigate back into the portfolio nodes.
+                    </p>
+                    <div style="margin-top: 3.5rem;">
+                        <a href="/index.html"
+                            style="display: inline-block; font-size: 0.85rem; color: var(--accent); border: 1px solid var(--accent); padding: 0.8rem 1.8rem; border-radius: 4px; text-decoration: none; letter-spacing: 0.1em; font-weight: 600; text-align: center; transition: all 0.3s ease;">RETURN_TO_HOME ↗</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top reveal">
+                <div class="footer-brand">
+                    <span class="footer-col-label">#READY_TO_BUILD</span>
+                    <h2>LET'S CREATE<br>TOGETHER.</h2>
+                    <a href="mailto:manoj.mohandev@gmail.com" class="footer-link"
+                        style="font-size: 1.5rem; color: var(--accent);">MANOJ.MOHANDEV@GMAIL.COM</a>
+                </div>
+                <div class="footer-nav">
+                    <span class="footer-col-label">01 // EXPLORE</span>
+                    <div class="footer-links">
+                        <a href="/index.html" class="footer-link">HOME</a>
+                        <a href="/projects.html" class="footer-link">PROJECTS</a>
+                        <a href="/blog.html" class="footer-link">WRITINGS</a>
+                        <a href="/certifications.html" class="footer-link">CREDENTIALS</a>
+                        <a href="/resume.html" class="footer-link">RESUME</a>
+                    </div>
+                </div>
+                <div class="footer-social">
+                    <span class="footer-col-label">02 // CONNECT</span>
+                    <div class="footer-links">
+                        <a href="https://github.com/manojmohangit" target="_blank" class="footer-link">GITHUB</a>
+                        <a href="https://www.linkedin.com/in/manumani07/" target="_blank"
+                            class="footer-link">LINKEDIN</a>
+                        <a href="https://manojmohandev.medium.com/" target="_blank" class="footer-link">MEDIUM</a>
+                        <a href="https://dev.to/manoj_004d" target="_blank" class="footer-link">DEV.TO</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 MANOJ MOHAN // BENGALURU, IN</span>
+                <span>Made with <span style="color: #ff4b4b;">❤️</span> <a href="https://manojmohan.dev"
+                        class="footer-link"
+                        style="font-size: inherit; display: inline; text-decoration: none; border: none; padding: 0;">Manoj</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/assets/js/data.min.js?v=1.0.2"></script>
+    <script src="/assets/js/script.min.js?v=1.0.2"></script>
+</body>
+
+</html>

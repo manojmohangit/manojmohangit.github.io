@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Family Celebration Gallery - V. Sunil Kumar</title>
+    <title>Celebration Gallery - V. Sunil Kumar</title>
 
     <meta name="description"
-        content="A beautiful photo gallery showing highlights and family moments from V. Sunil Kumar's retirement celebration.">
-    <meta property="og:title" content="Family Celebration Gallery - V. Sunil Kumar">
+        content="A beautiful photo gallery showing highlights and memorable moments from V. Sunil Kumar's retirement celebration.">
+    <meta property="og:title" content="Celebration Gallery - V. Sunil Kumar">
     <meta property="og:description"
-        content="View and cherish the special family moments from my retirement function. Thank you for being a part of this journey.">
+        content="View and cherish the special moments from my retirement function. Thank you for being a part of this journey.">
     <meta property="og:type" content="website">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,8 +20,15 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <link rel="icon" type="image/svg+xml" href="./assets/favicons/invite.svg">
-    <link rel="stylesheet" href="./assets/css/gallery.min.css?v=1.0.0">
+    <link rel="icon" type="image/svg+xml" href="../assets/favicons/invite.svg">
+    <link rel="stylesheet" href="../assets/css/gallery.min.css?v=1.0.0">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D7Q3VK3NTD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-D7Q3VK3NTD');
+    </script>
 </head>
 
 <body>
@@ -32,9 +39,9 @@
     <div class="gallery-container">
         <header class="gallery-header">
             <div class="gallery-monogram">VSK</div>
-            <h1 class="gallery-main-title">Family Gallery</h1>
-            <p class="gallery-subtitle">Highlights with Family - Retirement Function of V. Sunil Kumar</p>
-            
+            <h1 class="gallery-main-title">Celebration Gallery</h1>
+            <p class="gallery-subtitle">Highlights from the Retirement Function of V. Sunil Kumar</p>
+
             <div class="ornate-divider">
                 <div class="line"></div>
                 <i class="fa-regular fa-star"></i>
@@ -46,19 +53,16 @@
 
         <!-- Grid of Photo Cards -->
         <main class="photo-grid" id="photo-grid">
-            <!-- Dynamically populated via family-gallery.min.js -->
+            <!-- Dynamically populated via gallery.min.js -->
         </main>
 
         <!-- Navigation / Action Buttons -->
         <footer class="navigation-bar">
-            <a href="retirement-thankyou-family.html" class="btn-action">
+            <a href="thankyou.html" class="btn-action">
                 <i class="fa-solid fa-heart"></i> Gratitude Note
             </a>
-            <a href="retirement-invitation.html" class="btn-action">
+            <a href="index.html" class="btn-action">
                 <i class="fa-solid fa-envelope-open-text"></i> View Invitation
-            </a>
-            <a href="index.html" class="btn-action btn-action-primary">
-                <i class="fa-solid fa-house"></i> Return Home
             </a>
         </footer>
     </div>
@@ -89,7 +93,7 @@
         <div id="lightbox-counter" class="lightbox-counter"></div>
     </div>
 
-    <script src="./assets/js/family-gallery.min.js?v=1.0.0"></script>
+    <script src="../assets/js/gallery.min.js?v=1.0.0"></script>
 </body>
 
 </html>
