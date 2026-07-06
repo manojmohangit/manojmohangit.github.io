@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="With AI tools letting us spin up dozens of experimental projects in minutes, standard node_modules will quickly clog your drive. Enter pnpm.">
+    <title>Vibe Coding is Eating Your SSD: How pnpm Saves Your Disk in the AI Era // MANOJ MOHAN</title>
+    <link rel="stylesheet" href="../assets/css/style.min.css?v=1.1.0">
+    <script>document.documentElement.classList.add('js');</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D7Q3VK3NTD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-D7Q3VK3NTD');
+    </script>
+    <!-- Prism Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" id="prism-theme">
+    <link rel="stylesheet" href="../assets/css/blog-post.min.css?v=1.1.0">
+</head>
+
+<body>
+    <div class="bg-grid-overlay"></div>
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a href="../index.html" class="logo"><strong>M.</strong>MOHAN</a>
+            <div class="nav-links">
+                <a href="../index.html" class="nav-link">HOME</a>
+                <a href="../projects.html" class="nav-link">PROJECTS</a>
+                <a href="../blog.html" class="nav-link active">BLOG</a>
+                <a href="../certifications.html" class="nav-link">CERTIFICATIONS</a>
+                <a href="../resume.html" class="nav-link">RESUME</a>
+            </div>
+            <button class="theme-btn" id="theme-toggle" aria-label="Toggle Theme">
+                <span class="theme-toggle-knob"></span>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        <header class="section-header container post-header">
+            <span class="section-label reveal">JUL 04, 2026 // DEV BLOG</span>
+            <h1 class="section-title reveal">Vibe Coding is Eating Your SSD: How pnpm Saves Your Disk in the AI Era</h1>
+        </header>
+
+        <section class="container">
+            <div class="bento-item active post-wrapper">
+                <div class="post-content">
+                    <p>Welcome to the <strong>Vibe Coding</strong> era. </p>
+<p>With AI agents, chat-to-code interfaces, and code generation models, the cost of starting a new project has dropped to zero. We describe an idea, watch the AI spin up a fully-functioning React/Vite template, run a quick preview, and check the &quot;vibe.&quot; If it works, we keep building; if it doesn&#39;t, we discard it and start fresh. </p>
+<p>But this rapid, frictionless prototyping has a silent, compounding side-effect: <strong>workspace pollution and SSD exhaustion.</strong></p>
+<p>Every time an AI helper initializes a project, it starts with an install command. A standard React starter kit with Tailwind, TypeScript, and modern linting config downloads roughly <strong>300MB to 700MB</strong> of dependencies. </p>
+<p>If you vibe-code just five or six small prototypes a day, you are accumulating <strong>gigabytes of redundant, duplicated code modules</strong> on your drive. Within a couple of weeks, your machine is running out of disk space, clogged with dozens of forgotten <code>node_modules</code> folders containing the exact same versions of the exact same packages.</p>
+<p>Here is how <code>pnpm</code> (Performant npm) silently solves this problem, giving you the freedom to prototype endlessly without your hard drive paying the price.</p>
+<hr>
+<h2>The Node Modules Black Hole: npm vs. pnpm</h2>
+<p>To understand why <code>pnpm</code> is a necessity in the AI generation era, let&#39;s look at how it compares to standard package managers.</p>
+<h3>1. The npm Approach: Duplicate Everything</h3>
+<p>Every time you run <code>npm install</code> or <code>yarn install</code>, the packages are downloaded from the registry and copied entirely into your project&#39;s local directory. </p>
+<p>If you have 10 projects using React, you have 10 physical copies of React on your hard drive. </p>
+<h3>2. The pnpm Approach: Content-Addressable Storage</h3>
+<p><code>pnpm</code> uses a completely different architecture. Instead of copying packages into every project, it keeps them in a single, global folder on your machine (usually under <code>~/.local/share/pnpm/store</code>).</p>
+<p>When you install dependencies in a project:</p>
+<ol>
+<li><code>pnpm</code> checks if the package already exists in the global store.</li>
+<li>If it does, it creates a <strong>Hard Link</strong> from the store to your project’s <code>node_modules/.pnpm</code> directory.</li>
+<li>It then structures your project&#39;s <code>node_modules</code> using <strong>Symbolic Links (symlinks)</strong> to point to that hard-linked directory.</li>
+</ol>
+<pre><code>       Global Store (~/.pnpm-store)
+                 │
+      ┌──────────┴──────────┐
+      ▼                     ▼
+Project A/node_modules   Project B/node_modules
+ (Hard linked)            (Hard linked)
+</code></pre>
+<p>Because of this, the physical files only exist <strong>once</strong> on your hard drive. No matter how many React projects you spin up, they all point to the same physical file on your disk.</p>
+<h4>⚠️ The Partition &amp; Multi-Drive Catch (Important)</h4>
+<p>Since hard links <strong>cannot cross drive partition boundaries</strong> (e.g., you cannot link a file from <code>C:\</code> drive to a project on <code>D:\</code> or <code>G:\</code> drive), <code>pnpm</code> handles this intelligently:</p>
+<ul>
+<li>If your project is on your main drive (<code>C:\</code>), it links from your global home store (e.g. <code>C:\Users\username\AppData\Local\pnpm\store</code>).</li>
+<li>If you work on an external or partitioned drive (like <code>G:\</code> or <code>D:\</code>), <code>pnpm</code> will automatically create a dedicated store on the root of that partition (e.g., <code>G:\.pnpm-store</code>). This ensures hard links are still created locally on that drive, saving your space and avoiding slow cross-disk copies.</li>
+</ul>
+<hr>
+<h2>Real World Savings: A Comparison</h2>
+<p>If you create 15 experimental Vite + Tailwind + TypeScript apps:</p>
+<table>
+<thead>
+<tr>
+<th align="left">Package Manager</th>
+<th align="left">Average Node Modules Size</th>
+<th align="left">15 Projects Total Size</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>npm / yarn</strong></td>
+<td align="left">~350 MB</td>
+<td align="left"><strong>5.25 GB</strong></td>
+</tr>
+<tr>
+<td align="left"><strong>pnpm</strong></td>
+<td align="left">~350 MB (Shared Store)</td>
+<td align="left"><strong>~350 MB</strong> (Total)</td>
+</tr>
+</tbody></table>
+<p>With <code>pnpm</code>, 15 projects take up virtually the <strong>same space as a single project</strong>, with only a few kilobytes of overhead for the symlinks.</p>
+<hr>
+<h2>Bonus: Protecting against &quot;Phantom Dependencies&quot;</h2>
+<p>In the vibe coding era, code is often generated by AIs that might write imports for packages you didn&#39;t explicitly install in your <code>package.json</code> (such as transitive dependencies of other packages). </p>
+<ul>
+<li><strong>npm</strong> hoists all packages to the top-level <code>node_modules</code>, meaning if package <code>A</code> depends on <code>B</code>, you can import <code>B</code> directly in your code without listing it in <code>package.json</code>. If you update package <code>A</code> later and it drops dependency <code>B</code>, your code breaks.</li>
+<li><strong>pnpm</strong> uses a strict, non-hoisted nested layout. You can only import what you explicitly listed in your <code>package.json</code>. This keeps AI-generated code clean, predictable, and maintainable.</li>
+</ul>
+<hr>
+<h2>Teaching Your AI Coding Agent to Use pnpm</h2>
+<p>If you are using AI coding assistants (like Cursor, Windsurf, Copilot, or Antigravity), you can explicitly teach them to use <code>pnpm</code> instead of <code>npm</code>. Since these agents read your workspace files to understand your preferences, configuring project-level rules forces the AI to adapt to <code>pnpm</code> automatically.</p>
+<p>Here is how you can set this up:</p>
+<h3>1. Create a Project-Level Rules File</h3>
+<p>Most AI coding editors look for a markdown/system rules file in your workspace root.</p>
+<ul>
+<li><strong>For Cursor</strong>: Create a <code>.cursorrules</code> file.</li>
+<li><strong>For Windsurf</strong>: Create a <code>.windsurfrules</code> file.</li>
+<li><strong>For general agents (like Antigravity)</strong>: Add rules to <code>.agents/AGENTS.md</code>.</li>
+</ul>
+<h3>2. The AI Instructions Template</h3>
+<p>Paste these instructions into your rules file:</p>
+<pre><code class="language-markdown"># Package Manager Rules
+- Always use `pnpm` instead of `npm` or `yarn` for all package management tasks.
+- When installing packages, use `pnpm add &lt;package_name&gt;` instead of `npm i` or `npm install`.
+- When running scripts, use `pnpm run &lt;script&gt;` or `pnpm &lt;script&gt;` instead of `npm run`.
+- When executing binaries, use `pnpm dlx &lt;package&gt;` instead of `npx &lt;package&gt;`.
+- Do not create `package-lock.json` or `yarn.lock`. Ensure only `pnpm-lock.yaml` is generated and maintained.
+</code></pre>
+<h3>3. Cleanup Habit: <code>pnpm store prune</code></h3>
+<p>When you delete discarded vibe-coding folders from your disk, the actual physical package files still linger in your global pnpm store. To clean up and free up disk space from packages that are no longer referenced by any active project, run:</p>
+<pre><code class="language-bash">pnpm store prune
+</code></pre>
+<h3>4. Pro-Tip: Reclaim Gigabytes Right Now with <code>npkill</code></h3>
+<p>If you want to quickly locate and delete all the old, duplicate <code>node_modules</code> folders sitting on your drive from past projects, you can use <code>npkill</code>. You don&#39;t even need to install it:</p>
+<pre><code class="language-bash">pnpm dlx npkill
+</code></pre>
+<p>This utility opens an interactive list of all <code>node_modules</code> directories in your path, allowing you to delete them with a tap of the spacebar. Run this first, clean out the duplicates, and start fresh with <code>pnpm</code>!</p>
+<hr>
+<h2>How to Switch Your Vibe Projects to pnpm</h2>
+<p>If you are using Node, you can install pnpm globally:</p>
+<pre><code class="language-bash">npm install -g pnpm
+</code></pre>
+<p>Then, next time you or your AI agent spins up a new repo, instead of running <code>npm install</code>, simply run:</p>
+<pre><code class="language-bash">pnpm install
+</code></pre>
+<p>Your SSD will thank you, your build pipelines will run faster, and you can keep vibe coding without worrying about running out of disk space!</p>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top reveal">
+                <div class="footer-brand">
+                    <span class="footer-col-label">#READY_TO_BUILD</span>
+                    <h2>LET'S CREATE<br>TOGETHER.</h2>
+                    <a href="mailto:manoj.mohandev@gmail.com" class="footer-link"
+                        style="font-size: 1.5rem; color: var(--accent);">MANOJ.MOHANDEV@GMAIL.COM</a>
+                </div>
+                <div class="footer-nav">
+                    <span class="footer-col-label">01 // EXPLORE</span>
+                    <div class="footer-links">
+                        <a href="../index.html" class="footer-link">HOME</a>
+                        <a href="../projects.html" class="footer-link">PROJECTS</a>
+                        <a href="../blog.html" class="footer-link">BLOG</a>
+                        <a href="../certifications.html" class="footer-link">CREDENTIALS</a>
+                        <a href="../resume.html" class="footer-link">RESUME</a>
+                    </div>
+                </div>
+                <div class="footer-social">
+                    <span class="footer-col-label">02 // CONNECT</span>
+                    <div class="footer-links">
+                        <a href="https://github.com/manojmohangit" target="_blank" class="footer-link">GITHUB</a>
+                        <a href="https://www.linkedin.com/in/manumani07/" target="_blank"
+                            class="footer-link">LINKEDIN</a>
+                        <a href="https://manojmohandev.medium.com/" target="_blank" class="footer-link">MEDIUM</a>
+                        <a href="https://dev.to/manoj_004d" target="_blank" class="footer-link">DEV.TO</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 MANOJ MOHAN // BENGALURU, IN</span>
+                <span>Made with <span style="color: #ff4b4b;">❤️</span> <a href="https://manojmohan.dev" class="footer-link" style="font-size: inherit; display: inline; text-decoration: none; border: none; padding: 0;">Manoj</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/script.min.js?v=1.1.0"></script>
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+        const prismTheme = document.getElementById('prism-theme');
+        const updatePrismTheme = () => {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            prismTheme.href = isLight 
+                ? "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" 
+                : "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css";
+        };
+        updatePrismTheme();
+        const themeObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'data-theme') {
+                    updatePrismTheme();
+                }
+            });
+        });
+        themeObserver.observe(document.documentElement, { attributes: true });
+    </script>
+</body>
+
+</html>

@@ -74,6 +74,17 @@ document.addEventListener('DOMContentLoaded', function () {
         postsGrid.innerHTML = '<div class="bento-item reveal active" style="grid-column: span 12; border: 1px dashed var(--muted);"><span class="bento-id">#FETCHING_LOGS...</span><h3 class="bento-title">SYNCHRONIZING_WITH_EXTERNAL_NODES</h3></div>';
 
         try {
+            // Fetch local posts
+            let localPosts = [];
+            try {
+                const localResponse = await fetch('./assets/data/local-posts.json');
+                if (localResponse.ok) {
+                    localPosts = await localResponse.json();
+                }
+            } catch (e) {
+                console.warn('Could not load local posts:', e);
+            }
+
             const devtoResponse = await fetch('https://dev.to/api/articles?username=manoj_004d');
             const devtoPosts = await devtoResponse.json();
 
@@ -84,13 +95,19 @@ document.addEventListener('DOMContentLoaded', function () {
             const isHomePage = !!document.getElementById('hero-socials');
 
             const unifiedPosts = [
+                ...localPosts.map(p => ({
+                    ...p,
+                    date: new Date(p.date),
+                    tags: p.tags || []
+                })),
                 ...devtoPosts.map(p => ({
                     title: p.title,
                     date: new Date(p.published_at),
                     dateStr: new Date(p.published_at).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).toUpperCase(),
                     excerpt: p.description,
                     link: p.url,
-                    source: 'DEV.TO'
+                    source: 'DEV.TO',
+                    tags: p.tag_list || []
                 })),
                 ...mediumPosts.map(p => ({
                     title: p.title,
@@ -98,7 +115,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     dateStr: new Date(p.pubDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }).toUpperCase(),
                     excerpt: p.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...',
                     link: p.link,
-                    source: 'MEDIUM'
+                    source: 'MEDIUM',
+                    tags: p.categories || []
                 }))
             ];
 
@@ -109,17 +127,26 @@ document.addEventListener('DOMContentLoaded', function () {
             unifiedPosts.forEach((post, index) => {
                 const item = document.createElement('a');
                 item.href = post.link;
-                item.target = "_blank";
+                if (post.source !== 'DEV BLOG') {
+                    item.target = "_blank";
+                }
                 item.className = 'bento-item reveal active';
 
                 item.style.gridColumn = isHomePage ? (index < 4 ? `span 6` : `display:none`) : `span 12`;
 
                 if (isHomePage && index >= 4) return; // Only show 4 on home
 
+                const tagsHtml = post.tags && post.tags.length > 0
+                    ? `<div class="bento-tech" style="margin-top: 1rem;">
+                        ${post.tags.map(t => `<span class="tech-tag">${t.toUpperCase()}</span>`).join('')}
+                       </div>`
+                    : '';
+
                 item.innerHTML = `
                     <span class="bento-id">${post.dateStr} // ${post.source}</span>
                     <h3 class="bento-title" style="font-size: 1.5rem;">${post.title}</h3>
                     <p class="bento-desc">${post.excerpt}</p>
+                    ${tagsHtml}
                 `;
                 postsGrid.appendChild(item);
             });
@@ -204,5 +231,53 @@ document.addEventListener('DOMContentLoaded', function () {
             certsGrid.appendChild(item);
             observer.observe(item);
         });
+    }
+
+    // Dynamic Mobile Navigation Menu Toggle Setup
+    const navInner = document.querySelector('.nav-inner');
+    if (navInner && themeBtn) {
+        // Create a wrapper for controls (theme toggle + menu toggle)
+        const controls = document.createElement('div');
+        controls.className = 'nav-controls';
+        
+        // Relocate theme toggle button inside the new container
+        themeBtn.parentNode.insertBefore(controls, themeBtn);
+        controls.appendChild(themeBtn);
+        
+        // Create and append the hamburger menu toggle button
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'nav-toggle';
+        toggleBtn.setAttribute('aria-label', 'Toggle Navigation');
+        toggleBtn.innerHTML = `
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+            <span class="nav-toggle-bar"></span>
+        `;
+        controls.appendChild(toggleBtn);
+        
+        const navLinks = document.querySelector('.nav-links');
+        if (navLinks) {
+            toggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                navLinks.classList.toggle('nav-links-active');
+                toggleBtn.classList.toggle('nav-toggle-active');
+            });
+            
+            // Close the menu when clicking on any nav link
+            navLinks.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('nav-links-active');
+                    toggleBtn.classList.remove('nav-toggle-active');
+                });
+            });
+
+            // Close the menu if clicked outside the navigation bar
+            document.addEventListener('click', (e) => {
+                if (!navInner.contains(e.target) && navLinks.classList.contains('nav-links-active')) {
+                    navLinks.classList.remove('nav-links-active');
+                    toggleBtn.classList.remove('nav-toggle-active');
+                }
+            });
+        }
     }
 });

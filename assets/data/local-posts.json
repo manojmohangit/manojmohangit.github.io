@@ -1,0 +1,16 @@
+[
+  {
+    "title": "Vibe Coding is Eating Your SSD: How pnpm Saves Your Disk in the AI Era",
+    "date": "2026-07-04",
+    "dateStr": "JUL 04, 2026",
+    "excerpt": "With AI tools letting us spin up dozens of experimental projects in minutes, standard node_modules will quickly clog your drive. Enter pnpm.",
+    "link": "./blog/pnpm-vibe-coding.html",
+    "source": "DEV BLOG",
+    "tags": [
+      "PNPM",
+      "NODE",
+      "AI",
+      "TOOLING"
+    ]
+  }
+]
