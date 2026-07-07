@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Why the classic pagination approach is still the safest, lowest-overhead way to handle millions of rows, and where it falls short.">
+    <title>Rendering 100k Rows: How Far Can the DOM Go? (Part 1: Pagination) // MANOJ MOHAN</title>
+    <link rel="stylesheet" href="../assets/css/style.min.css?v=1.1.0">
+    <script>document.documentElement.classList.add('js');</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D7Q3VK3NTD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-D7Q3VK3NTD');
+    </script>
+    <!-- Prism Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" id="prism-theme">
+    <link rel="stylesheet" href="../assets/css/blog-post.min.css?v=1.1.0">
+    <link rel="stylesheet" href="../assets/css/playground.min.css?v=1.1.0">
+</head>
+
+<body>
+    <div class="bg-grid-overlay"></div>
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a href="../index.html" class="logo"><strong>M.</strong>MOHAN</a>
+            <div class="nav-links">
+                <a href="../index.html" class="nav-link">HOME</a>
+                <a href="../projects.html" class="nav-link">PROJECTS</a>
+                <a href="../blog.html" class="nav-link active">BLOG</a>
+                <a href="../certifications.html" class="nav-link">CERTIFICATIONS</a>
+                <a href="../resume.html" class="nav-link">RESUME</a>
+            </div>
+            <button class="theme-btn" id="theme-toggle" aria-label="Toggle Theme">
+                <span class="theme-toggle-knob"></span>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        <header class="section-header container post-header">
+            <span class="section-label reveal">JUL 07, 2026 // DEV BLOG</span>
+            <h1 class="section-title reveal">Rendering 100k Rows: How Far Can the DOM Go? (Part 1: Pagination)</h1>
+        </header>
+
+        <section class="container">
+            <div class="bento-item active post-wrapper">
+                <div class="post-content">
+                    <p>Welcome to Part 1 of our series, <strong>&quot;Rendering 100k Rows: How Far Can the DOM Go?&quot;</strong> </p>
+<p>When building dashboards, databases, or analytics platforms, you will eventually face the dreaded requirement: <em>&quot;We need to display a massive table of data.&quot;</em> </p>
+<p>If you attempt to render 100,000 rows directly into the DOM using a standard HTML table, your browser tab will freeze, your CPU fans will spin up, and the page will eventually crash. But why?</p>
+<p>Before we look at virtualization or drawing pixels on a Canvas, let&#39;s look at the classic, battle-tested solution: <strong>Pagination</strong>.</p>
+<hr>
+<h2>The Physics of the DOM: Why 100k Rows Crash the Browser</h2>
+<p>To understand why pagination is so effective, we must understand the cost of a DOM node. </p>
+<p>In a standard browser, an HTML element isn&#39;t just text. It is a complex JavaScript object with styling computations, layout boundaries, event listeners, and accessibility roles. </p>
+<ul>
+<li>A simple table row (<code>&lt;tr&gt;</code>) with 5 columns (<code>&lt;td&gt;</code>) contains at least <strong>6 DOM nodes</strong>.</li>
+<li>Rendering 100,000 rows means mounting <strong>600,000 DOM nodes</strong>!</li>
+</ul>
+<p>When you insert 600,000 nodes, the browser’s layout engine goes through a multi-step process:</p>
+<ol>
+<li><strong>Recalculate Style</strong>: Determine the CSS rules for all 600k nodes.</li>
+<li><strong>Layout (Reflow)</strong>: Calculate the exact position and size of each element.</li>
+<li><strong>Paint</strong>: Rasterize the pixels onto the screen.</li>
+</ol>
+<p>If the user scrolls, resizes the window, or hovers over a row, the browser might trigger another reflow. Doing this for over half a million elements at 60 frames per second is mathematically impossible for modern CPU threads.</p>
+<hr>
+<h2>Enter Pagination: Capping the DOM</h2>
+<p>The core philosophy of pagination is simple: <strong>Do not render what the user cannot see.</strong></p>
+<p>Instead of loading all 100,000 records onto the screen, pagination partitions the dataset into small chunks (usually 10, 25, or 100 items at a time). </p>
+<pre><code>[ Page 1 (Items 1-10) ]  --&gt; Rendered in DOM (Fast!)
+[ Page 2 (Items 11-20) ] --&gt; In Memory / Database (Not Rendered)
+[ Page 3 (Items 21-30) ] --&gt; In Memory / Database (Not Rendered)
+</code></pre>
+<p>By capping the rendered elements to 10 or 100 rows, the active DOM nodes stay under 600. The browser style recalculation takes microseconds, and interactions remain fluid.</p>
+<h3>Visualizing the Pagination Pipeline</h3>
+<p>Here is an interactive diagram showing how the data is loaded on demand. Click <strong>Next Page</strong> or <strong>Prev Page</strong> to see how the indicator slides down your dataset array, triggering a load pulse into the active browser DOM.</p>
+<div style="padding: 1.5rem; margin: 2rem 0; background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; display: flex; flex-direction: column; align-items: center;">
+  <span style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; letter-spacing: 0.05em;">Interactive Flow Diagram</span>
+  <canvas id="post-flow-visualizer" width="560" height="130" style="width: 100%; max-width: 560px; height: auto; background: rgba(0, 0, 0, 0.3); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.05);"></canvas>
+  <div style="display: flex; gap: 12px; margin-top: 1.2rem; align-items: center;">
+    <button id="vis-prev" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: background 0.2s;">← Prev Page</button>
+    <span id="vis-label" style="font-size: 0.85rem; color: #fff; opacity: 0.8; min-width: 150px; text-align: center; font-family: monospace;">Page 1 / 10000</span>
+    <button id="vis-next" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #fff; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: background 0.2s;">Next Page →</button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const canvas = document.getElementById('post-flow-visualizer');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    let currentPage = 1;
+    const totalPages = 10000;
+    const pageSize = 10;
+    let animProgress = 1;
+    let animTimer = null;
+    
+    const prevBtn = document.getElementById('vis-prev');
+    const nextBtn = document.getElementById('vis-next');
+    const label = document.getElementById('vis-label');
+    
+    function draw() {
+      const w = canvas.width;
+      const h = canvas.height;
+      
+      ctx.clearRect(0, 0, w, h);
+      
+      // Left box: Database (100k items)
+      ctx.fillStyle = 'rgba(255,255,255,0.02)';
+      ctx.fillRect(20, 20, 150, 90);
+      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(20, 20, 150, 90);
+      
+      // Draw database simulated records
+      ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+      for (let y = 30; y < 105; y += 8) {
+        ctx.beginPath();
+        ctx.moveTo(35, y);
+        ctx.lineTo(155, y);
+        ctx.stroke();
+      }
+      
+      // Draw DB Label
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.font = 'bold 8px sans-serif';
+      ctx.fillText('DATABASE (100K ROWS)', 30, 14);
+      
+      // Highlight current page selector window
+      const selectorY = 22 + ((currentPage - 1) / totalPages) * 78;
+      ctx.fillStyle = 'rgba(59, 130, 246, 0.3)';
+      ctx.fillRect(22, selectorY, 146, 8);
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(22, selectorY, 146, 8);
+
+      // Draw active range offset indicator next to DB box
+      ctx.fillStyle = '#60a5fa';
+      ctx.font = '7px monospace';
+      const startRecordIdx = (currentPage - 1) * pageSize + 1;
+      const endRecordIdx = currentPage * pageSize;
+      ctx.fillText(`[${startRecordIdx}-${endRecordIdx}]`, 173, selectorY + 7);
+      
+      // Right box: DOM (10 rows)
+      ctx.fillStyle = 'rgba(255,255,255,0.02)';
+      ctx.fillRect(390, 20, 150, 90);
+      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(390, 20, 150, 90);
+      
+      // Draw DOM Label
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.fillText('ACTIVE DOM (10 ROWS)', 400, 14);
+      
+      // Draw active elements inside DOM
+      const domFlashColor = animProgress < 1 ? `rgba(16, 185, 129, ${0.4 * (1 - animProgress)})` : 'transparent';
+      if (domFlashColor !== 'transparent') {
+        ctx.fillStyle = domFlashColor;
+        ctx.fillRect(391, 21, 148, 88);
+      }
+      
+      // Draw dynamic page-based rows
+      ctx.fillStyle = '#10b981';
+      ctx.font = '6.5px monospace';
+      let lineIndex = 0;
+      for (let y = 33; y < 105; y += 7.2) {
+        if (lineIndex < pageSize) {
+          ctx.fillText(`Row #${startRecordIdx + lineIndex}`, 396, y);
+          ctx.beginPath();
+          ctx.moveTo(455, y - 2);
+          ctx.lineTo(530, y - 2);
+          ctx.strokeStyle = 'rgba(16, 185, 129, 0.25)';
+          ctx.stroke();
+          lineIndex++;
+        }
+      }
+      
+      // Connecting Pipe/Flow Line
+      const startX = 170;
+      const endX = 390;
+      const centerY = 65;
+      
+      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(startX, centerY);
+      ctx.lineTo(endX, centerY);
+      ctx.stroke();
+      
+      // Pulse animation along the pipe
+      if (animProgress < 1) {
+        const pulseX = startX + animProgress * (endX - startX);
+        ctx.fillStyle = '#10b981';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#10b981';
+        ctx.beginPath();
+        ctx.arc(pulseX, centerY, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    }
+    
+    function triggerAnimation() {
+      animProgress = 0;
+      if (animTimer) cancelAnimationFrame(animTimer);
+      
+      function step() {
+        animProgress += 0.08;
+        if (animProgress >= 1) {
+          animProgress = 1;
+          draw();
+        } else {
+          draw();
+          animTimer = requestAnimationFrame(step);
+        }
+      }
+      step();
+    }
+    
+    function updateControls() {
+      label.textContent = `Page ${currentPage.toLocaleString()} / ${totalPages.toLocaleString()}`;
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === totalPages;
+      triggerAnimation();
+    }
+    
+    prevBtn.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        updateControls();
+      }
+    });
+    
+    nextBtn.addEventListener('click', () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        updateControls();
+      }
+    });
+    
+    draw();
+  })();
+</script>
+
+<hr>
+<h2>Client-Side vs. Server-Side Pagination</h2>
+<p>When implementing pagination, you have two routing architectural paths:</p>
+<h3>1. Client-Side Pagination</h3>
+<p>You fetch all 100,000 rows from the server in a single JSON payload, store them in JavaScript memory (an array), and slice the array in the frontend to render the current page.</p>
+<ul>
+<li><strong>Pros</strong>: Page transitions are instant because the data is already in memory.</li>
+<li><strong>Cons</strong>: The initial page load is slow because the browser has to download and parse a massive JSON payload (often 10MB+). High memory usage.</li>
+</ul>
+<h3>2. Server-Side Pagination</h3>
+<p>The frontend only requests the current page slice from the server (e.g., <code>GET /api/users?page=1&amp;limit=10</code>). The database uses query offsets (<code>LIMIT 10 OFFSET 0</code>) to fetch only those 10 rows.</p>
+<ul>
+<li><strong>Pros</strong>: Tiny network payloads, instant initial load, and minimal frontend memory footprint.</li>
+<li><strong>Cons</strong>: A slight delay (network roundtrip) every time the user clicks &quot;Next Page&quot;.</li>
+</ul>
+<hr>
+<h2>Interactive Demo: Pagination in Action</h2>
+<p>Below is an interactive playground where we simulate a dataset of <strong>100,000 records</strong>. Play with the page navigation and watch how quickly the rendering handles page switches.</p>
+<p><em>Notice how the DOM tree size remains tiny, allowing the page to render instantly.</em></p>
+<div class="html-playground">
+<textarea class="playground-source" style="display:none;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0f172a;
+      color: #f1f5f9;
+      padding: 1.5rem;
+      margin: 0;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      background: #1e293b;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+    }
+    .stats {
+      font-size: 0.85rem;
+      color: #94a3b8;
+    }
+    .btn {
+      background: #3b82f6;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .btn:disabled {
+      background: #475569;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1e293b;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #334155;
+    }
+    th {
+      background: #0f172a;
+      color: #3b82f6;
+      font-weight: 600;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="controls">
+    <button class="btn" id="prev-btn" disabled>Prev</button>
+    <div class="stats" id="page-indicator">Page 1 of 10000</div>
+    <button class="btn" id="next-btn">Next</button>
+  </div>
+
+  <table id="data-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Role</th>
+      </tr>
+    </thead>
+    <tbody id="table-body">
+      <!-- Rows will be injected here -->
+    </tbody>
+  </table>
+
+  <script>
+    // Generate 100,000 mock records in memory
+    const totalRecords = 100000;
+    const pageSize = 10;
+    let currentPage = 1;
+    
+    // Lazy array generation to keep iframe load fast
+    function getRecord(index) {
+      return {
+        id: index + 1,
+        name: `User ${index + 1}`,
+        email: `user${index + 1}@example.com`,
+        role: index % 3 === 0 ? 'Admin' : (index % 2 === 0 ? 'Editor' : 'Viewer')
+      };
+    }
+
+    const tbody = document.getElementById('table-body');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const indicator = document.getElementById('page-indicator');
+
+    function renderPage() {
+      const startIdx = (currentPage - 1) * pageSize;
+      const endIdx = startIdx + pageSize;
+      
+      let html = '';
+      for (let i = startIdx; i < endIdx && i < totalRecords; i++) {
+        const item = getRecord(i);
+        html += `
+          <tr>
+            <td>#${item.id}</td>
+            <td><strong>${item.name}</strong></td>
+            <td>${item.email}</td>
+            <td>${item.role}</td>
+          </tr>
+        `;
+      }
+      
+      tbody.innerHTML = html;
+      indicator.textContent = `Page ${currentPage} of ${totalRecords / pageSize} (${startIdx + 1} - ${endIdx} of ${totalRecords.toLocaleString()} rows)`;
+      
+      prevBtn.disabled = currentPage === 1;
+      nextBtn.disabled = currentPage === (totalRecords / pageSize);
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderPage();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentPage < (totalRecords / pageSize)) {
+        currentPage++;
+        renderPage();
+      }
+    });
+
+    // Initial render
+    renderPage();
+  </script>
+</body>
+</html>
+</textarea>
+</div>
+
+<hr>
+<h2>The Verdict: When to use Pagination</h2>
+<p>While pagination solves rendering issues completely, it is a compromise. </p>
+<h3>Pros:</h3>
+<ol>
+<li><strong>Unbeatable rendering speed</strong>: Your DOM stays clean and light.</li>
+<li><strong>SEO &amp; Navigation</strong>: Standard URL queries (e.g., <code>?page=3</code>) can be indexed by search engines and bookmarked by users.</li>
+<li><strong>Accessibility</strong>: Standard HTML links and tables are perfectly understood by screen readers.</li>
+</ol>
+<h3>Cons:</h3>
+<ol>
+<li><strong>Broken User Flow</strong>: Users hate clicking &quot;Next&quot; repeatedly to find a specific row.</li>
+<li><strong>Inability to Compare</strong>: You cannot easily select elements on page 1 and compare them with elements on page 5.</li>
+</ol>
+<p>If your users need an <strong>uninterrupted infinite scroll feed</strong> or need to work with huge grids seamlessly, pagination is not the answer. </p>
+<p>In <strong>Part 2</strong>, we’ll explore how to build the illusion of infinite scrolling without overloading the browser using <strong>DOM Virtualization</strong>. Stay tuned!</p>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top reveal">
+                <div class="footer-brand">
+                    <span class="footer-col-label">#READY_TO_BUILD</span>
+                    <h2>LET'S CREATE<br>TOGETHER.</h2>
+                    <a href="mailto:manoj.mohandev@gmail.com" class="footer-link"
+                        style="font-size: 1.5rem; color: var(--accent);">MANOJ.MOHANDEV@GMAIL.COM</a>
+                </div>
+                <div class="footer-nav">
+                    <span class="footer-col-label">01 // EXPLORE</span>
+                    <div class="footer-links">
+                        <a href="../index.html" class="footer-link">HOME</a>
+                        <a href="../projects.html" class="footer-link">PROJECTS</a>
+                        <a href="../blog.html" class="footer-link">BLOG</a>
+                        <a href="../certifications.html" class="footer-link">CREDENTIALS</a>
+                        <a href="../resume.html" class="footer-link">RESUME</a>
+                    </div>
+                </div>
+                <div class="footer-social">
+                    <span class="footer-col-label">02 // CONNECT</span>
+                    <div class="footer-links">
+                        <a href="https://github.com/manojmohangit" target="_blank" class="footer-link">GITHUB</a>
+                        <a href="https://www.linkedin.com/in/manumani07/" target="_blank"
+                            class="footer-link">LINKEDIN</a>
+                        <a href="https://manojmohandev.medium.com/" target="_blank" class="footer-link">MEDIUM</a>
+                        <a href="https://dev.to/manoj_004d" target="_blank" class="footer-link">DEV.TO</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 MANOJ MOHAN // BENGALURU, IN</span>
+                <span>Made with <span style="color: #ff4b4b;">❤️</span> <a href="https://manojmohan.dev" class="footer-link" style="font-size: inherit; display: inline; text-decoration: none; border: none; padding: 0;">Manoj</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/script.min.js?v=1.1.0"></script>
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+        const prismTheme = document.getElementById('prism-theme');
+        const updatePrismTheme = () => {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            prismTheme.href = isLight 
+                ? "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" 
+                : "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css";
+        };
+        updatePrismTheme();
+        const themeObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'data-theme') {
+                    updatePrismTheme();
+                }
+            });
+        });
+        themeObserver.observe(document.documentElement, { attributes: true });
+    </script>
+    <script src="../assets/js/playground.min.js?v=1.1.0"></script>
+</body>
+
+</html>

@@ -1,5 +1,19 @@
 [
   {
+    "title": "Rendering 100k Rows: How Far Can the DOM Go? (Part 1: Pagination)",
+    "date": "2026-07-07",
+    "dateStr": "JUL 07, 2026",
+    "excerpt": "Why the classic pagination approach is still the safest, lowest-overhead way to handle millions of rows, and where it falls short.",
+    "link": "./blog/rendering-100k-rows-part-1-pagination.html",
+    "source": "DEV BLOG",
+    "tags": [
+      "PERFORMANCE",
+      "DOM",
+      "JAVASCRIPT",
+      "PAGINATION"
+    ]
+  },
+  {
     "title": "Vibe Coding is Eating Your SSD: How pnpm Saves Your Disk in the AI Era",
     "date": "2026-07-04",
     "dateStr": "JUL 04, 2026",
