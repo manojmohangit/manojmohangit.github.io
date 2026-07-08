@@ -1,5 +1,19 @@
 [
   {
+    "title": "Rendering 100k Rows: How Far Can the DOM Go? (Part 2: DOM Virtualization)",
+    "date": "2026-07-08",
+    "dateStr": "JUL 08, 2026",
+    "excerpt": "How to simulate scrolling through millions of records smoothly by recycling a fixed set of DOM nodes in real time.",
+    "link": "./blog/rendering-100k-rows-part-2-virtualization.html",
+    "source": "DEV BLOG",
+    "tags": [
+      "PERFORMANCE",
+      "DOM",
+      "JAVASCRIPT",
+      "VIRTUALIZATION"
+    ]
+  },
+  {
     "title": "Rendering 100k Rows: How Far Can the DOM Go? (Part 1: Pagination)",
     "date": "2026-07-07",
     "dateStr": "JUL 07, 2026",
