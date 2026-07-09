@@ -1,5 +1,19 @@
 [
   {
+    "title": "Rendering 100k Rows: How Far Can the DOM Go? (Part 3: Canvas Grids)",
+    "date": "2026-07-09",
+    "dateStr": "JUL 09, 2026",
+    "excerpt": "Why high-performance tools like Figma and Google Sheets bypass the DOM entirely by drawing cells directly onto a 2D Canvas context.",
+    "link": "./blog/rendering-100k-rows-part-3-canvas.html",
+    "source": "DEV BLOG",
+    "tags": [
+      "PERFORMANCE",
+      "CANVAS",
+      "JAVASCRIPT",
+      "BIG-DATA"
+    ]
+  },
+  {
     "title": "Rendering 100k Rows: How Far Can the DOM Go? (Part 2: DOM Virtualization)",
     "date": "2026-07-08",
     "dateStr": "JUL 08, 2026",

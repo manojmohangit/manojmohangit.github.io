@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Why high-performance tools like Figma and Google Sheets bypass the DOM entirely by drawing cells directly onto a 2D Canvas context.">
+    <title>Rendering 100k Rows: How Far Can the DOM Go? (Part 3: Canvas Grids) // MANOJ MOHAN</title>
+    <link rel="stylesheet" href="../assets/css/style.min.css?v=1.1.0">
+    <script>document.documentElement.classList.add('js');</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D7Q3VK3NTD"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-D7Q3VK3NTD');
+    </script>
+    <!-- Prism Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" id="prism-theme">
+    <link rel="stylesheet" href="../assets/css/blog-post.min.css?v=1.1.0">
+    <link rel="stylesheet" href="../assets/css/playground.min.css?v=1.1.1">
+</head>
+
+<body>
+    <div class="bg-grid-overlay"></div>
+    <nav class="nav">
+        <div class="container nav-inner">
+            <a href="../index.html" class="logo"><strong>M.</strong>MOHAN</a>
+            <div class="nav-links">
+                <a href="../index.html" class="nav-link">HOME</a>
+                <a href="../projects.html" class="nav-link">PROJECTS</a>
+                <a href="../blog.html" class="nav-link active">BLOG</a>
+                <a href="../certifications.html" class="nav-link">CERTIFICATIONS</a>
+                <a href="../resume.html" class="nav-link">RESUME</a>
+            </div>
+            <button class="theme-btn" id="theme-toggle" aria-label="Toggle Theme">
+                <span class="theme-toggle-knob"></span>
+            </button>
+        </div>
+    </nav>
+
+    <main>
+        <header class="section-header container post-header">
+            <span class="section-label reveal">JUL 09, 2026 // DEV BLOG</span>
+            <h1 class="section-title reveal">Rendering 100k Rows: How Far Can the DOM Go? (Part 3: Canvas Grids)</h1>
+        </header>
+
+        <section class="container">
+            <div class="bento-item active post-wrapper">
+                <div class="post-content">
+                    <p>Welcome to Part 3 of our series, <strong>&quot;Rendering 100k Rows: How Far Can the DOM Go?&quot;</strong> </p>
+<p>In <a href="./rendering-100k-rows-part-2-virtualization.html">Part 2</a>, we explored <strong>DOM Virtualization</strong>, a technique that recycles HTML nodes to render thousands of items smoothly. This works wonders for single-column lists or simple tables, but what happens when your data grows in both dimensions?</p>
+<p>Imagine building a massive spreadsheet with <strong>100 columns and 100,000 rows</strong> (10 million total cells). If the user scrolls diagonally or resizes columns, even a virtualized grid must coordinate thousands of active DOM operations in real time, leading to noticeable frame drops and lag.</p>
+<p>To cross this multi-dimensional performance barrier, high-performance tools like Google Sheets, Airtable, and Figma abandon HTML nodes entirely. Instead, they draw their interfaces on an <strong>HTML5 Canvas</strong>.</p>
+<hr>
+<h2>Why Canvas? The Power of a Single DOM Node</h2>
+<p>An HTML5 Canvas is essentially a blank graphic image container. No matter how complex your grid is, the browser&#39;s DOM tree only sees <strong>one single element</strong>:</p>
+<pre><code class="language-html">&lt;canvas id=&quot;grid-canvas&quot;&gt;&lt;/canvas&gt;
+</code></pre>
+<p>Instead of letting the browser calculate layouts and paint elements automatically, we write JavaScript instructions to paint pixels directly onto this 2D graphic context using the Canvas API (<code>ctx.fillText</code>, <code>ctx.fillRect</code>, <code>ctx.strokeRect</code>).</p>
+<p>Since there are no DOM nodes to update, style recalculations, reflows, and layout cycles drop to <strong>zero</strong>. The rendering speed is limited only by how fast your GPU can paint pixels.</p>
+<hr>
+<h3>Visualizing Coordinate Math: Hover Event Mapping</h3>
+<p>Because a Canvas is just a flat image, it has no native concept of cells, click handlers, or hover states. </p>
+<p>If a user clicks the canvas, the browser only provides the pixel coordinates (e.g., <code>clientX = 220</code>, <code>clientY = 65</code>). We must write the math to map those pixels back to our database row and column indexes.</p>
+<p>Hover your cursor over the visualizer below to see how coordinate mapping calculates the active row and column in real time:</p>
+<ul>
+<li><strong>Row</strong> = <code>Math.floor(MouseY / RowHeight)</code></li>
+<li><strong>Column</strong> = <code>Math.floor(MouseX / ColumnWidth)</code></li>
+</ul>
+<div class="bento-item" style="padding: 1.5rem; margin: 2rem 0; display: flex; flex-direction: column; align-items: center; border-radius: 12px;">
+  <span style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; letter-spacing: 0.05em;">Interactive Coordinate Mapper</span>
+  <canvas id="coordinate-visualizer" width="560" height="150" style="width: 100%; max-width: 560px; height: auto; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); transition: background-color var(--transition), border-color var(--transition); cursor: crosshair;"></canvas>
+  <div id="coordinate-stats" style="margin-top: 1.2rem; font-size: 0.85rem; color: var(--fg); font-family: monospace; text-align: center; display: flex; gap: 20px; font-weight: 600;">
+    <span>Mouse X/Y: <span id="mouse-coords" style="color: var(--accent);">0, 0</span></span>
+    <span>Mapped Cell: <span id="mapped-cell" style="color: #10b981;">None</span></span>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const canvas = document.getElementById('coordinate-visualizer');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    const mouseLabel = document.getElementById('mouse-coords');
+    const cellLabel = document.getElementById('mapped-cell');
+    
+    const colWidth = 112;
+    const rowHeight = 30;
+    const colsCount = 5;
+    const rowsCount = 5;
+    
+    let mouseX = -100;
+    let mouseY = -100;
+    
+    function draw() {
+      const w = canvas.width;
+      const h = canvas.height;
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      
+      // Theme colors
+      const colorBg = isLight ? '#f9f9f7' : '#0a0a0a';
+      const colorBorder = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
+      const colorLines = isLight ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.05)';
+      const colorText = isLight ? '#475569' : '#94a3b8';
+      const colorActiveText = isLight ? '#0f172a' : '#ffffff';
+      
+      ctx.fillStyle = colorBg;
+      ctx.fillRect(0, 0, w, h);
+      
+      // Calculate active cell
+      const activeCol = Math.floor(mouseX / colWidth);
+      const activeRow = Math.floor(mouseY / rowHeight);
+      const isHovered = activeCol >= 0 && activeCol < colsCount && activeRow >= 0 && activeRow < rowsCount;
+      
+      // Draw grid cells
+      for (let r = 0; r < rowsCount; r++) {
+        for (let c = 0; c < colsCount; c++) {
+          const x = c * colWidth;
+          const y = r * rowHeight;
+          
+          if (isHovered && r === activeRow && c === activeCol) {
+            ctx.fillStyle = 'rgba(59, 130, 246, 0.15)';
+            ctx.fillRect(x + 1, y + 1, colWidth - 2, rowHeight - 2);
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(x + 1, y + 1, colWidth - 2, rowHeight - 2);
+          } else {
+            ctx.strokeStyle = colorLines;
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, y, colWidth, rowHeight);
+          }
+          
+          // Draw dummy text inside cells
+          ctx.fillStyle = (isHovered && r === activeRow && c === activeCol) ? colorActiveText : colorText;
+          ctx.font = '9px monospace';
+          ctx.fillText(`R${r} C${c}`, x + 10, y + 18);
+        }
+      }
+      
+      // Draw mouse target crosshairs
+      if (mouseX >= 0 && mouseX <= w && mouseY >= 0 && mouseY <= h) {
+        ctx.strokeStyle = 'rgba(59, 130, 246, 0.4)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 4]);
+        
+        // Horizontal line
+        ctx.beginPath();
+        ctx.moveTo(0, mouseY);
+        ctx.lineTo(w, mouseY);
+        ctx.stroke();
+        
+        // Vertical line
+        ctx.beginPath();
+        ctx.moveTo(mouseX, 0);
+        ctx.lineTo(mouseX, h);
+        ctx.stroke();
+        
+        ctx.setLineDash([]);
+      }
+    }
+    
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      // Scale coordinates in case canvas size is modified by CSS
+      mouseX = (e.clientX - rect.left) * (canvas.width / rect.width);
+      mouseY = (e.clientY - rect.top) * (canvas.height / rect.height);
+      
+      const c = Math.floor(mouseX / colWidth);
+      const r = Math.floor(mouseY / rowHeight);
+      
+      mouseLabel.textContent = `${Math.round(mouseX)}, ${Math.round(mouseY)}`;
+      
+      if (c >= 0 && c < colsCount && r >= 0 && r < rowsCount) {
+        cellLabel.textContent = `Row ${r}, Col ${c}`;
+      } else {
+        cellLabel.textContent = 'None';
+      }
+      
+      draw();
+    });
+    
+    canvas.addEventListener('mouseleave', () => {
+      mouseX = -100;
+      mouseY = -100;
+      mouseLabel.textContent = '0, 0';
+      cellLabel.textContent = 'None';
+      draw();
+    });
+    
+    // Watch for theme updates
+    const observer = new MutationObserver(() => draw());
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    
+    draw();
+  })();
+</script>
+
+<hr>
+<h2>Interactive Demo: Simple Canvas Grid</h2>
+<p>Below is a working implementation of a table rendering <strong>10,000 records</strong> on a Canvas. </p>
+<p>Open the editor (click <strong>Edit Code</strong>), and view how the scrolling and drawing cycle performs at <strong>60fps</strong> using <code>requestAnimationFrame</code>.</p>
+<div class="html-playground">
+<textarea class="playground-source" style="display:none;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0f172a;
+      color: #f1f5f9;
+      padding: 1rem;
+      margin: 0;
+    }
+    .grid-container {
+      position: relative;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+    }
+    canvas {
+      flex: 1;
+      width: 100%;
+      display: block;
+      cursor: default;
+    }
+    .scrollbar-y {
+      width: 12px;
+      background: #0f172a;
+      position: relative;
+      cursor: pointer;
+    }
+    .scrollbar-handle {
+      position: absolute;
+      width: 8px;
+      left: 2px;
+      background: #3b82f6;
+      border-radius: 4px;
+    }
+    .stats-bar {
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+  </style>
+</head>
+<body>
+
+  <h3>Canvas-Based Grid Demo</h3>
+  
+  <div class="grid-container" id="container">
+    <canvas id="grid" height="300"></canvas>
+    <div class="scrollbar-y" id="scrollbar">
+      <div class="scrollbar-handle" id="handle"></div>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <span>Mounted DOM elements inside Grid: <strong>0</strong> (Single Canvas Element)</span>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('grid');
+    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('container');
+    const scrollbar = document.getElementById('scrollbar');
+    const handle = document.getElementById('handle');
+
+    const totalRows = 10000;
+    const rowHeight = 30;
+    const totalHeight = totalRows * rowHeight;
+    const viewportHeight = canvas.height;
+    
+    let scrollY = 0;
+
+    // Generate mock database rows
+    function getRowData(index) {
+      return [
+        `#${index + 1}`,
+        `Canvas Record ${index + 1}`,
+        `Active status: ID-${1000 + (index % 5)}`
+      ];
+    }
+
+    // Scroll calculations
+    const maxScroll = totalHeight - viewportHeight;
+    
+    function updateScrollbar() {
+      const pct = scrollY / maxScroll;
+      const handleH = Math.max(20, (viewportHeight / totalHeight) * viewportHeight);
+      const trackH = scrollbar.clientHeight;
+      const handleY = pct * (trackH - handleH);
+      
+      handle.style.height = `${handleH}px`;
+      handle.style.top = `${handleY}px`;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const colWidths = [60, 200, Math.max(100, canvas.width - 260)];
+      const startRow = Math.floor(scrollY / rowHeight);
+      const endRow = Math.min(totalRows - 1, Math.floor((scrollY + viewportHeight) / rowHeight));
+      
+      for (let r = startRow; r <= endRow; r++) {
+        const rowData = getRowData(r);
+        const y = r * rowHeight - scrollY;
+        
+        // Draw row backgrounds
+        ctx.fillStyle = r % 2 === 0 ? '#1e293b' : '#1e293b88';
+        ctx.fillRect(0, y, canvas.width, rowHeight);
+        
+        // Draw bottom borders
+        ctx.strokeStyle = '#334155';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, y + rowHeight);
+        ctx.lineTo(canvas.width, y + rowHeight);
+        ctx.stroke();
+        
+        // Draw cells text
+        ctx.fillStyle = '#f1f5f9';
+        ctx.font = '12px sans-serif';
+        
+        let currentX = 0;
+        for (let c = 0; c < colWidths.length; c++) {
+          ctx.fillText(rowData[c], currentX + 10, y + 18);
+          
+          // Draw column borders
+          ctx.strokeStyle = '#334155';
+          ctx.beginPath();
+          ctx.moveTo(currentX + colWidths[c], y);
+          ctx.lineTo(currentX + colWidths[c], y + rowHeight);
+          ctx.stroke();
+          
+          currentX += colWidths[c];
+        }
+      }
+      
+      updateScrollbar();
+    }
+
+    // Mouse scroll listener
+    container.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      scrollY = Math.max(0, Math.min(maxScroll, scrollY + e.deltaY));
+      requestAnimationFrame(draw);
+    });
+
+    // Drag scrollbar listener
+    let isDragging = false;
+    let startDragY = 0;
+    let startScrollY = 0;
+
+    scrollbar.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startDragY = e.clientY;
+      startScrollY = scrollY;
+      document.body.style.userSelect = 'none';
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const deltaY = e.clientY - startDragY;
+      const trackH = scrollbar.clientHeight;
+      const handleH = handle.clientHeight;
+      const scrollPct = deltaY / (trackH - handleH);
+      
+      scrollY = Math.max(0, Math.min(maxScroll, startScrollY + scrollPct * maxScroll));
+      requestAnimationFrame(draw);
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+      document.body.style.userSelect = 'auto';
+    });
+
+    // Handle canvas width responsive updates
+    function resizeCanvas() {
+      canvas.width = container.clientWidth - scrollbar.clientWidth;
+      draw();
+    }
+    window.addEventListener('resize', resizeCanvas);
+    
+    // Initial load
+    resizeCanvas();
+  </script>
+</body>
+</html>
+</textarea>
+</div>
+
+<hr>
+<h2>The Canvas Trade-off: Performance vs. Complexity</h2>
+<p>While Canvas offers absolute rendering performance, it is a double-edged sword. By bypassing the DOM, you lose basic features that the browser normally handles for free:</p>
+<ol>
+<li><strong>Text Overflow &amp; Wrapping</strong>: Canvas does not wrap text. If a cell contains a long sentence, you must write JS logic to measure the text width (<code>ctx.measureText</code>) and break it into substrings.</li>
+<li><strong>Scroll Offsets &amp; Events</strong>: You must build and handle scrollbars yourself by listening to mouse wheel events (<code>wheel</code>) and touch scroll gestures, calculating drawing offsets, and manually triggering redraw frames.</li>
+<li><strong>Accessibility (a11y)</strong>: Screen readers cannot read pixels painted on a canvas. You must construct a hidden, overlaying HTML table containing ARIA labels that duplicates the data structure so assistive tools can navigate.</li>
+<li><strong>No Native Selection or Copy-Paste</strong>: Users cannot click and drag to highlight text or use <code>Ctrl+C</code>/<code>Cmd+C</code> to copy text from cells. To support copy-paste, you must track selection coordinates in JS and manually write text to the Clipboard API.</li>
+<li><strong>Goodbye, CSS Styling</strong>: You lose hover effects, focus rings, border-radius, fonts, and transitions. All visual styles, spacing, and hover cues must be rendered manually using imperative canvas commands in JavaScript.</li>
+<li><strong>SEO &amp; Indexability</strong>: Search engines cannot parse or index the data rendered inside a Canvas. It is completely invisible to SEO.</li>
+<li><strong>High-DPI / Retina Blurriness</strong>: A basic Canvas context ignores high-resolution screen scales, resulting in blurry text and pixelated lines. Developers must scale the Canvas dimensions manually using <code>window.devicePixelRatio</code> and apply a scale transform.</li>
+</ol>
+<hr>
+<h2>Summary: When to choose Canvas</h2>
+<p><strong>HTML5 Canvas Grids</strong> are the ultimate solution when you need:</p>
+<ol>
+<li><strong>Sub-millisecond rendering loops</strong> for high-frequency or real-time data feeds.</li>
+<li><strong>Dense spreadsheets</strong> containing millions of individual cells.</li>
+<li><strong>Advanced graphic layouts</strong> (like nested hierarchies or canvas-drawn graphics).</li>
+</ol>
+<p>If you are only building a standard table with a few hundred columns and don&#39;t need real-time formula computation or cell pixel selections, virtualization will offer a simpler design workflow.</p>
+<p>In <strong>Part 4</strong>, we will conclude the series by building a complete <strong>benchmark shootout</strong> comparing Pagination, DOM Virtualization, and Canvas Grids side-by-side. Stay tuned!</p>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top reveal">
+                <div class="footer-brand">
+                    <span class="footer-col-label">#READY_TO_BUILD</span>
+                    <h2>LET'S CREATE<br>TOGETHER.</h2>
+                    <a href="mailto:manoj.mohandev@gmail.com" class="footer-link"
+                        style="font-size: 1.5rem; color: var(--accent);">MANOJ.MOHANDEV@GMAIL.COM</a>
+                </div>
+                <div class="footer-nav">
+                    <span class="footer-col-label">01 // EXPLORE</span>
+                    <div class="footer-links">
+                        <a href="../index.html" class="footer-link">HOME</a>
+                        <a href="../projects.html" class="footer-link">PROJECTS</a>
+                        <a href="../blog.html" class="footer-link">BLOG</a>
+                        <a href="../certifications.html" class="footer-link">CREDENTIALS</a>
+                        <a href="../resume.html" class="footer-link">RESUME</a>
+                    </div>
+                </div>
+                <div class="footer-social">
+                    <span class="footer-col-label">02 // CONNECT</span>
+                    <div class="footer-links">
+                        <a href="https://github.com/manojmohangit" target="_blank" class="footer-link">GITHUB</a>
+                        <a href="https://www.linkedin.com/in/manumani07/" target="_blank"
+                            class="footer-link">LINKEDIN</a>
+                        <a href="https://manojmohandev.medium.com/" target="_blank" class="footer-link">MEDIUM</a>
+                        <a href="https://dev.to/manoj_004d" target="_blank" class="footer-link">DEV.TO</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 MANOJ MOHAN // BENGALURU, IN</span>
+                <span>Made with <span style="color: #ff4b4b;">❤️</span> <a href="https://manojmohan.dev" class="footer-link" style="font-size: inherit; display: inline; text-decoration: none; border: none; padding: 0;">Manoj</a></span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/script.min.js?v=1.1.0"></script>
+    <!-- Prism Syntax Highlighting JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script>
+        const prismTheme = document.getElementById('prism-theme');
+        const updatePrismTheme = () => {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            prismTheme.href = isLight 
+                ? "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" 
+                : "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css";
+        };
+        updatePrismTheme();
+        const themeObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'data-theme') {
+                    updatePrismTheme();
+                }
+            });
+        });
+        themeObserver.observe(document.documentElement, { attributes: true });
+    </script>
+    <script src="../assets/js/playground.min.js?v=1.1.1"></script>
+</body>
+
+</html>
