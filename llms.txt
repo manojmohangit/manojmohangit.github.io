@@ -1,0 +1,23 @@
+# Manoj Mohan
+
+> Senior Software Developer specializing in high-performance data visualization and scalable cloud infrastructure.
+
+## Info
+- Homepage: https://manojmohan.dev
+- Resume: https://manojmohan.dev/resume.html
+- Email: manoj.mohandev@gmail.com
+- GitHub: https://github.com/manojmohangit
+- LinkedIn: https://www.linkedin.com/in/manumani07/
+
+## Core Projects
+- [Cerber Cloudflare Sync](https://github.com/manojmohangit/cerber-lockout-cloudflare-sync): WordPress plugin that synchronizes IP lockout events to Cloudflare.
+- [Maa Saheli](https://maasaheli.manojmohan.dev/): Maternal health connectivity platform built with Flutter and Firebase.
+- [Grocery Hub](https://groceryhub.manojmohan.dev/): Intelligent inventory management system built with React and TypeScript.
+- [NPM Stats Analyzer](https://manojmohan.dev/compare-npm-download-stats/): High-density data visualization platform for NPM package telemetry.
+
+## Technical Blog Posts
+
+- [Part 1: Pagination](https://manojmohan.dev/blog/rendering-100k-rows-part-1-pagination.html) ([Markdown Source](https://manojmohan.dev/posts/rendering-100k-rows-part-1-pagination.md)): Why the classic pagination approach is still the safest, lowest-overhead way to handle millions of rows.
+- [Part 2: DOM Virtualization](https://manojmohan.dev/blog/rendering-100k-rows-part-2-virtualization.html) ([Markdown Source](https://manojmohan.dev/posts/rendering-100k-rows-part-2-virtualization.md)): How to simulate scrolling through millions of records smoothly by recycling a fixed set of DOM nodes.
+- [Part 3: Canvas Grids](https://manojmohan.dev/blog/rendering-100k-rows-part-3-canvas.html) ([Markdown Source](https://manojmohan.dev/posts/rendering-100k-rows-part-3-canvas.md)): Why high-performance tools like Figma and Google Sheets bypass the DOM entirely by drawing cells directly onto a 2D Canvas.
+- [pnpm Vibe Coding](https://manojmohan.dev/blog/pnpm-vibe-coding.html) ([Markdown Source](https://manojmohan.dev/posts/pnpm-vibe-coding.md)): Navigating dependency trees and package resolution.
