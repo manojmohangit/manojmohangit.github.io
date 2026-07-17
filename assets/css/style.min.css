@@ -290,10 +290,10 @@ h3 {
 
 /* Section Header */
 .section-header {
-    padding-top: 10rem;
-    padding-bottom: 4rem;
+    padding-top: 6rem;
+    padding-bottom: 2rem;
     border-bottom: 1px solid var(--border);
-    margin-bottom: 4rem;
+    margin-bottom: 2rem;
 }
 
 .section-label {
@@ -338,7 +338,8 @@ h3 {
 }
 
 .bento-title {
-    font-size: 1.5rem;
+    font-size: clamp(1.2rem, 5vw, 1.5rem);
+    line-height: 1.2;
     margin-bottom: 1.5rem;
 }
 

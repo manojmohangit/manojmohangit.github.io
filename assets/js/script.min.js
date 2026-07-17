@@ -280,4 +280,78 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     }
+
+    // Dynamic post navigation for blog posts
+    async function buildPostNavigation() {
+        const placeholder = document.querySelector('.post-navigation-placeholder');
+        if (!placeholder) return;
+
+        try {
+            const isInBlogSubdir = window.location.pathname.includes('/blog/');
+            const fetchPath = isInBlogSubdir ? '../assets/data/local-posts.json' : './assets/data/local-posts.json';
+            const response = await fetch(fetchPath);
+            if (!response.ok) return;
+            const posts = await response.json();
+
+            // Find current page path/filename
+            const currentPath = window.location.pathname;
+            const currentFilename = currentPath.substring(currentPath.lastIndexOf('/') + 1);
+
+            // Find index of current post in JSON (comparing link file basenames)
+            const getFilename = (link) => link.substring(link.lastIndexOf('/') + 1);
+            const currentIndex = posts.findIndex(p => getFilename(p.link) === currentFilename);
+
+            if (currentIndex === -1) return;
+
+            // Since the JSON is in reverse chronological order (newest first):
+            // Next post (chronologically newer) is at currentIndex - 1
+            // Previous post (chronologically older) is at currentIndex + 1
+            const nextPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
+            const prevPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
+
+            let navHtml = `<div class="post-navigation" style="margin-top: 4rem; padding-top: 2rem; border-top: 1px solid var(--border); display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; width: 100%;">`;
+
+            if (prevPost) {
+                const prevUrl = isInBlogSubdir ? `./${getFilename(prevPost.link)}` : prevPost.link;
+                navHtml += `
+                    <a href="${prevUrl}" style="display: flex; flex-direction: column; text-decoration: none; color: var(--fg); opacity: 0.8; transition: all 0.2s; max-width: 45%;">
+                        <span style="font-size: 0.75rem; font-family: monospace; text-transform: uppercase; color: var(--muted); margin-bottom: 0.25rem;">&larr; Previous Article</span>
+                        <span style="font-weight: 600; font-size: 1rem; color: var(--accent);">${prevPost.title}</span>
+                    </a>`;
+            } else {
+                const blogIndexUrl = isInBlogSubdir ? '../blog.html' : './blog.html';
+                navHtml += `
+                    <a href="${blogIndexUrl}" style="display: flex; flex-direction: column; text-decoration: none; color: var(--fg); opacity: 0.8; transition: all 0.2s; max-width: 45%;">
+                        <span style="font-size: 0.75rem; font-family: monospace; text-transform: uppercase; color: var(--muted); margin-bottom: 0.25rem;">&larr; Back to Blog</span>
+                        <span style="font-weight: 600; font-size: 1rem;">All Technical Blogs</span>
+                    </a>`;
+            }
+
+            if (nextPost) {
+                const nextUrl = isInBlogSubdir ? `./${getFilename(nextPost.link)}` : nextPost.link;
+                navHtml += `
+                    <a href="${nextUrl}" style="display: flex; flex-direction: column; text-align: right; text-decoration: none; color: var(--fg); opacity: 0.8; transition: all 0.2s; max-width: 45%; margin-left: auto;">
+                        <span style="font-size: 0.75rem; font-family: monospace; text-transform: uppercase; color: var(--muted); margin-bottom: 0.25rem;">Next Article &rarr;</span>
+                        <span style="font-weight: 600; font-size: 1rem; color: var(--accent);">${nextPost.title}</span>
+                    </a>`;
+            } else {
+                const blogIndexUrl = isInBlogSubdir ? '../blog.html' : './blog.html';
+                navHtml += `
+                    <a href="${blogIndexUrl}" style="display: flex; flex-direction: column; text-align: right; text-decoration: none; color: var(--fg); opacity: 0.8; transition: all 0.2s; max-width: 45%; margin-left: auto;">
+                        <span style="font-size: 0.75rem; font-family: monospace; text-transform: uppercase; color: var(--muted); margin-bottom: 0.25rem;">Next Article &rarr;</span>
+                        <span style="font-weight: 600; font-size: 1rem;">Back to Blog</span>
+                    </a>`;
+            }
+
+            navHtml += `</div>`;
+            placeholder.innerHTML = navHtml;
+        } catch (err) {
+            console.error('Failed to load post navigation:', err);
+        }
+    }
+
+    buildPostNavigation();
+
+
 });
+

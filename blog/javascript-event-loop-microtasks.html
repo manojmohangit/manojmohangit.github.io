@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Ever wonder why a Promise runs before a setTimeout? Stop guessing and master the JavaScript Event Loop with clear examples and a live interactive queue simulator.">
+  <title>Visualizing the JS Event Loop: Microtasks, Macrotasks, and the Render Queue // MANOJ MOHAN</title>
+  <link rel="stylesheet" href="../assets/css/style.min.css?v=1.1.0">
+  <script>document.documentElement.classList.add('js');</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D7Q3VK3NTD"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-D7Q3VK3NTD');
+  </script>
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://manojmohan.dev/blog/javascript-event-loop-microtasks.html">
+  <meta property="og:title" content="Visualizing the JS Event Loop: Microtasks, Macrotasks, and the Render Queue">
+  <meta property="og:description"
+    content="Ever wonder why a Promise runs before a setTimeout? Stop guessing and master the JavaScript Event Loop with clear examples and a live interactive queue simulator.">
+  <meta property="og:image" content="https://manojmohan.dev/assets/img/blog/og-javascript-event-loop-microtasks.png">
+  <meta property="og:site_name" content="Manoj Mohan">
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://manojmohan.dev/blog/javascript-event-loop-microtasks.html">
+  <meta property="twitter:title" content="Visualizing the JS Event Loop: Microtasks, Macrotasks, and the Render Queue">
+  <meta property="twitter:description"
+    content="Ever wonder why a Promise runs before a setTimeout? Stop guessing and master the JavaScript Event Loop with clear examples and a live interactive queue simulator.">
+  <meta property="twitter:image"
+    content="https://manojmohan.dev/assets/img/blog/og-javascript-event-loop-microtasks.png">
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "Visualizing the JS Event Loop: Microtasks, Macrotasks, and the Render Queue",
+      "description": "Ever wonder why a Promise runs before a setTimeout? Stop guessing and master the JavaScript Event Loop with clear examples and a live interactive queue simulator.",
+      "image": "https://manojmohan.dev/assets/img/blog/og-javascript-event-loop-microtasks.png",
+      "author": {
+        "@type": "Person",
+        "name": "Manoj Mohan",
+        "url": "https://manojmohan.dev"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Manoj Mohan",
+        "url": "https://manojmohan.dev"
+      },
+      "datePublished": "2026-07-17",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://manojmohan.dev/blog/javascript-event-loop-microtasks.html"
+      }
+    }
+    </script>
+  <!-- Prism Syntax Highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css"
+    id="prism-theme">
+  <link rel="stylesheet" href="../assets/css/blog-post.min.css?v=1.1.0">
+  <link rel="stylesheet" href="../assets/css/playground.min.css?v=1.1.1">
+</head>
+
+<body>
+  <div class="bg-grid-overlay"></div>
+  <nav class="nav">
+    <div class="container nav-inner">
+      <a href="../index.html" class="logo"><strong>M.</strong>MOHAN</a>
+      <div class="nav-links">
+        <a href="../index.html" class="nav-link">HOME</a>
+        <a href="../projects.html" class="nav-link">PROJECTS</a>
+        <a href="../blog.html" class="nav-link active">BLOG</a>
+        <a href="../certifications.html" class="nav-link">CERTIFICATIONS</a>
+        <a href="../resume.html" class="nav-link">RESUME</a>
+      </div>
+      <button class="theme-btn" id="theme-toggle" aria-label="Toggle Theme">
+        <span class="theme-toggle-knob"></span>
+      </button>
+    </div>
+  </nav>
+
+  <main>
+    <header class="section-header container post-header">
+      <span class="section-label reveal">JUL 17, 2026 // DEV BLOG</span>
+      <h1 class="section-title reveal" style="margin-bottom: 1.5rem;">Visualizing the JS Event Loop: Microtasks,
+        Macrotasks, and the Render Queue</h1>
+      <div class="post-tags reveal"
+        style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem;">
+        <span class="tech-tag"
+          style="background: var(--surface); border: 1px solid var(--border); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; color: var(--accent); font-family: monospace;">JAVASCRIPT</span>
+        <span class="tech-tag"
+          style="background: var(--surface); border: 1px solid var(--border); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; color: var(--accent); font-family: monospace;">ASYNCHRONOUS</span>
+        <span class="tech-tag"
+          style="background: var(--surface); border: 1px solid var(--border); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; color: var(--accent); font-family: monospace;">PERFORMANCE</span>
+        <span class="tech-tag"
+          style="background: var(--surface); border: 1px solid var(--border); padding: 4px 10px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; color: var(--accent); font-family: monospace;">EVENT-LOOP</span>
+      </div>
+    </header>
+
+    <section class="container">
+      <div class="bento-item active post-wrapper">
+        <div class="post-content">
+          <p>JavaScript is inherently single-threaded, meaning it can only execute one operation at a time. Despite this
+            architectural constraint, modern web applications seamlessly fetch background data, process complex user
+            interactions, and render buttery-smooth 60fps animations—all without locking up the main thread.</p>
+          <p>How does a single thread orchestrate such complex multitasking?</p>
+          <p>The answer lies in the <strong>Event Loop</strong>, a sophisticated scheduling mechanism that manages
+            execution across four distinct phases: the <strong>Call Stack</strong>, the <strong>Microtask
+              Queue</strong>, the <strong>Macrotask Queue</strong>, and the <strong>Render Queue</strong>.</p>
+          <p>In this post, we’ll demystify the internal rules of the Event Loop. We'll explore exactly how the browser
+            prioritizes tasks, dissect common interview riddles, and experiment with an interactive, real-time queue
+            simulator.</p>
+          <hr>
+          <h2>The Three Queues: Who Goes First?</h2>
+          <p>When asynchronous JavaScript code is triggered (like a resolved promise or a finished timer), it
+            doesn&#39;t run immediately. Instead, it gets pushed to a queue. The Event Loop&#39;s job is simple: look at
+            the Call Stack, wait for it to be completely empty, and then push callbacks from the queues onto the stack
+            in a strict order of priority.</p>
+          <p>Here is the priority hierarchy:</p>
+          <pre><code>┌──────────────────────────────────────────────┐
+│           Call Stack (Synchronous)           │ &lt;-- Run until empty
+└──────────────────────────────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│       1. Microtask Queue (High Priority)     │ &lt;-- Run ALL pending tasks
+└──────────────────────────────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│       2. Render Queue (Medium Priority)      │ &lt;-- Run rAF, recalculate, paint
+└──────────────────────────────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────┐
+│       3. Macrotask Queue (Low Priority)      │ &lt;-- Run ONE task per tick
+└──────────────────────────────────────────────┘
+</code></pre>
+          <ol>
+            <li><strong>Microtasks</strong> (<code>Promise.then</code>, <code>queueMicrotask</code>,
+              <code>MutationObserver</code>): The highest priority. As soon as the call stack clears, the Event Loop
+              <em>must</em> empty the entire Microtask Queue before doing anything else—even if new microtasks are
+              enqueued while processing!
+            </li>
+            <li><strong>Render Tasks</strong> (<code>requestAnimationFrame</code>, Style/Layout reflows, Painting):
+              Checked before drawing the next frame (typically every 16.7ms for a 60Hz display). <em>(Note:
+                <code>requestAnimationFrame</code> callbacks run before the browser's rendering steps, not as part of
+                the same queue. The "Render Queue" is a useful mental model for the "update the rendering" phase.)</em>
+            </li>
+            <li><strong>Macrotasks</strong> (or just <em>Tasks</em>: <code>setTimeout</code>, <code>setInterval</code>,
+              network requests, user inputs): The lowest priority. The Event Loop executes exactly <strong>one</strong>
+              macrotask, then immediately yields control to check if any microtasks or render tasks are waiting.</li>
+          </ol>
+          <p>Here is a reference of the key methods and APIs belonging to each queue:</p>
+          <div style="overflow-x: auto; margin: 1.5rem 0; border: 1px solid var(--border); border-radius: 8px;">
+            <table
+              style="width: 100%; border-collapse: collapse; font-family: monospace; font-size: 0.85rem; text-align: left;">
+              <thead>
+                <tr style="background: var(--surface); border-bottom: 1px solid var(--border);">
+                  <th style="padding: 10px 15px; color: var(--accent); font-weight: 600;">Queue</th>
+                  <th style="padding: 10px 15px; color: var(--accent); font-weight: 600;">Priority</th>
+                  <th style="padding: 10px 15px; color: var(--accent); font-weight: 600;">Associated Methods / APIs</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid var(--border);">
+                  <td style="padding: 10px 15px; font-weight: bold; color: #10b981;">Microtask Queue</td>
+                  <td style="padding: 10px 15px; color: var(--fg);">High (Runs until empty)</td>
+                  <td style="padding: 10px 15px; color: var(--muted);">
+                    <code>Promise.then() / catch() / finally()</code>, <code>queueMicrotask()</code>,
+                    <code>MutationObserver</code>, <code>process.nextTick()</code> <span
+                      style="font-size: 0.75rem; font-style: italic;">(Node.js)</span>
+                  </td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border);">
+                  <td style="padding: 10px 15px; font-weight: bold; color: #3b82f6;">Render Queue</td>
+                  <td style="padding: 10px 15px; color: var(--fg);">Medium (Before repaint)</td>
+                  <td style="padding: 10px 15px; color: var(--muted);"><code>requestAnimationFrame()</code>, Style
+                    recalculations, Layout reflow, Painting</td>
+                </tr>
+                <tr>
+                  <td style="padding: 10px 15px; font-weight: bold; color: #ef4444;">Macrotask Queue</td>
+                  <td style="padding: 10px 15px; color: var(--fg);">Low (Runs 1 per tick)</td>
+                  <td style="padding: 10px 15px; color: var(--muted);"><code>setTimeout()</code>,
+                    <code>setInterval()</code>, <code>setImmediate()</code> <span
+                      style="font-size: 0.75rem; font-style: italic;">(Node.js)</span>,
+                    <code>requestIdleCallback()</code>, UI Events <span
+                      style="font-size: 0.75rem; font-style: italic;">(click, keypress, etc.)</span>, network/fetch
+                    callbacks
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="bento-item"
+            style="padding: 1rem; margin-bottom: 1rem; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 8px;">
+            <p style="margin: 0; font-size: 0.9rem;"><strong>💡 <code>queueMicrotask</code> vs
+                <code>Promise.resolve().then()</code></strong><br>
+              While both schedule a microtask, <code>queueMicrotask(fn)</code> is the purpose-built API. It's more
+              explicit and slightly more efficient since it doesn't create an intermediate Promise object.</p>
+          </div>
+
+          <div class="bento-item"
+            style="padding: 1rem; margin-bottom: 1.5rem; background: rgba(245, 158, 11, 0.05); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px;">
+            <p style="margin: 0; font-size: 0.9rem;"><strong>⚠️ Browser vs. Node.js</strong><br>
+              This post describes the <strong>browser</strong> event loop. Node.js uses <code>libuv</code> with its own
+              distinct phases (timers → pending → idle → poll → check → close). There is no render queue in Node. APIs
+              like <code>process.nextTick()</code> and <code>setImmediate()</code> are Node-specific.</p>
+          </div>
+
+          <hr>
+          <h3>Interactive Event Loop Simulator</h3>
+          <p>Use the controls below to enqueue tasks and watch the Event Loop fetch, evaluate, and clear each queue in
+            real time. </p>
+          <ul>
+            <li>Click <strong>Step</strong> to execute a single cycle step.</li>
+            <li>Click <strong>Run</strong> to let it process automatically.</li>
+          </ul>
+          <div class="bento-item"
+            style="padding: 1.5rem; margin: 2rem 0; display: flex; flex-direction: column; align-items: center; border-radius: 12px; width: 100%;">
+            <span
+              style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; color: var(--accent); margin-bottom: 1.2rem; letter-spacing: 0.05em;">Interactive
+              Event Loop Simulator</span>
+
+            <div
+              style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1.5rem; justify-content: center; width: 100%;">
+              <button id="add-micro"
+                style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; color: #10b981; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600;">+
+                Promise (Microtask)</button>
+              <button id="add-macro"
+                style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600;">+
+                setTimeout (Macrotask)</button>
+              <button id="add-raf"
+                style="background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; color: #3b82f6; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600;">+
+                rAF (Render Task)</button>
+            </div>
+
+            <p> <canvas id="event-loop-visualizer" width="560" height="220"
+                style="width: 100%; max-width: 560px; height: auto; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); transition: background-color var(--transition), border-color var(--transition);"></canvas>
+            </p>
+            <div
+              style="display: flex; gap: 12px; margin-top: 1.2rem; align-items: center; width: 100%; justify-content: center;">
+              <button id="sim-step"
+                style="background: var(--surface); border: 1px solid var(--border); color: var(--fg); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;">Step
+                Cycle</button>
+              <button id="sim-run"
+                style="background: var(--accent); border: none; color: #fff; padding: 6px 18px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;">Run
+                Loop</button>
+              <button id="sim-clear"
+                style="background: var(--surface); border: 1px solid var(--border); color: var(--fg); opacity: 0.7; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;">Clear
+                Log</button>
+            </div>
+
+            <div
+              style="margin-top: 1.5rem; width: 100%; max-width: 560px; background: rgba(0,0,0,0.15); border-radius: 6px; border: 1px solid var(--border); padding: 10px;">
+              <div
+                style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase; font-family: monospace; border-bottom: 1px solid var(--border); padding-bottom: 5px; margin-bottom: 5px; font-weight: bold;">
+                Console Log Output</div>
+              <div id="sim-console"
+                style="font-family: monospace; font-size: 0.8rem; color: #10b981; height: 80px; overflow-y: auto; white-space: pre-wrap; line-height: 1.4;">
+                [System]: Ready. Click buttons to enqueue operations...</div>
+            </div>
+          </div>
+
+          <script>
+            (function () {
+              const canvas = document.getElementById('event-loop-visualizer');
+              if (!canvas) return;
+              const ctx = canvas.getContext('2d');
+
+              const consoleDiv = document.getElementById('sim-console');
+              let running = false;
+              let timer = null;
+
+              // Queue arrays holding labels
+              let microQueue = [];
+              let macroQueue = [];
+              let rafQueue = [];
+              let callStack = [];
+
+              // Current pointer highlighting
+              let activePhase = 'IDLE'; // 'STACK', 'MICRO', 'RAF', 'MACRO', 'PAINT'
+
+              function log(msg) {
+                consoleDiv.textContent += '\n' + msg;
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
+              }
+
+              document.getElementById('add-micro').addEventListener('click', () => {
+                microQueue.push(`Promise #${microQueue.length + 1}`);
+                log(`[Queue]: Microtask enqueued.`);
+                draw();
+              });
+
+              document.getElementById('add-macro').addEventListener('click', () => {
+                macroQueue.push(`setTimeout #${macroQueue.length + 1}`);
+                log(`[Queue]: Macrotask enqueued.`);
+                draw();
+              });
+
+              document.getElementById('add-raf').addEventListener('click', () => {
+                rafQueue.push(`rAF #${rafQueue.length + 1}`);
+                log(`[Queue]: Render task enqueued.`);
+                draw();
+              });
+
+              document.getElementById('sim-clear').addEventListener('click', () => {
+                consoleDiv.textContent = '[System]: Console cleared.';
+                microQueue = [];
+                macroQueue = [];
+                rafQueue = [];
+                callStack = [];
+                activePhase = 'IDLE';
+                if (running) toggleRun();
+                draw();
+              });
+
+              function step() {
+                // 1. Process Call Stack first
+                if (callStack.length > 0) {
+                  activePhase = 'STACK';
+                  const task = callStack.shift();
+                  log(`[Stack]: Executed: ${task}`);
+                  draw();
+                  return;
+                }
+
+                // 2. Process Microtasks next (drain completely)
+                if (microQueue.length > 0) {
+                  activePhase = 'MICRO';
+                  const task = microQueue.shift();
+                  callStack.push(task);
+                  log(`[Loop]: Moving ${task} from Microtask Queue to Stack`);
+                  draw();
+                  return;
+                }
+
+                // 3. Process Render Queue (drain animation frames)
+                if (rafQueue.length > 0) {
+                  activePhase = 'RAF';
+                  const task = rafQueue.shift();
+                  callStack.push(task);
+                  log(`[Loop]: Moving ${task} from Render Queue to Stack`);
+                  draw();
+                  return;
+                }
+
+                // 4. Process ONE Macrotask
+                if (macroQueue.length > 0) {
+                  activePhase = 'MACRO';
+                  const task = macroQueue.shift();
+                  callStack.push(task);
+                  log(`[Loop]: Moving ${task} from Macrotask Queue to Stack`);
+                  draw();
+                  return;
+                }
+
+                activePhase = 'IDLE';
+                if (running) {
+                  toggleRun();
+                }
+                log(`[System]: Idle. All queues cleared.`);
+                draw();
+              }
+
+              function toggleRun() {
+                running = !running;
+                const btn = document.getElementById('sim-run');
+                if (running) {
+                  btn.textContent = 'Pause Loop';
+                  btn.style.background = '#ef4444';
+                  timer = setInterval(step, 1000);
+                } else {
+                  btn.textContent = 'Run Loop';
+                  btn.style.background = 'var(--accent)';
+                  clearInterval(timer);
+                }
+              }
+
+              document.getElementById('sim-step').addEventListener('click', step);
+              document.getElementById('sim-run').addEventListener('click', toggleRun);
+
+              function draw() {
+                const w = canvas.width;
+                const h = canvas.height;
+                const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+
+                const colorBg = isLight ? '#f9f9f7' : '#0a0a0a';
+                const colorBoxBg = isLight ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.02)';
+                const colorBorder = isLight ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
+                const colorLabels = isLight ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.5)';
+                const colorText = isLight ? '#0f172a' : '#ffffff';
+
+                ctx.fillStyle = colorBg;
+                ctx.fillRect(0, 0, w, h);
+
+                // Draw Call Stack Column (Right)
+                const stackX = w - 160;
+                const boxW = 140;
+                ctx.fillStyle = colorBoxBg;
+                ctx.fillRect(stackX, 20, boxW, h - 40);
+                ctx.strokeStyle = activePhase === 'STACK' ? '#3b82f6' : colorBorder;
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(stackX, 20, boxW, h - 40);
+
+                ctx.fillStyle = '#3b82f6';
+                ctx.font = 'bold 9px monospace';
+                ctx.fillText('CALL STACK (Executes)', stackX + 10, 35);
+
+                if (callStack.length === 0) {
+                  ctx.fillStyle = colorLabels;
+                  ctx.fillText('[Empty]', stackX + 10, 60);
+                } else {
+                  callStack.forEach((t, i) => {
+                    ctx.fillStyle = '#3b82f6';
+                    ctx.fillRect(stackX + 10, 50 + i * 24, boxW - 20, 20);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '9px monospace';
+                    ctx.fillText(t, stackX + 18, 63 + i * 24);
+                  });
+                }
+
+                // Draw Queues (Left)
+                const drawQueue = (label, items, x, y, activeColor, isActive) => {
+                  ctx.fillStyle = colorBoxBg;
+                  ctx.fillRect(x, y, boxW + 80, 44);
+                  ctx.strokeStyle = isActive ? activeColor : colorBorder;
+                  ctx.lineWidth = 1.2;
+                  ctx.strokeRect(x, y, boxW + 80, 44);
+
+                  ctx.fillStyle = isActive ? activeColor : colorLabels;
+                  ctx.font = 'bold 8px monospace';
+                  ctx.fillText(label, x + 10, y + 14);
+
+                  if (items.length === 0) {
+                    ctx.fillStyle = colorLabels;
+                    ctx.font = '8px monospace';
+                    ctx.fillText('[Empty]', x + 10, y + 30);
+                  } else {
+                    items.forEach((item, idx) => {
+                      if (idx > 3) return; // Cap visual queue length
+                      ctx.fillStyle = activeColor;
+                      ctx.fillRect(x + 10 + idx * 52, y + 20, 48, 16);
+                      ctx.fillStyle = '#fff';
+                      ctx.font = '7px monospace';
+                      ctx.fillText(item.replace('setTimeout ', 'Timer').replace('Promise ', 'P.'), x + 14 + idx * 52, y + 31);
+                    });
+                  }
+                };
+
+                drawQueue('MICROTASK QUEUE (High)', microQueue, 20, 20, '#10b981', activePhase === 'MICRO');
+                drawQueue('RENDER QUEUE (Animation)', rafQueue, 20, 80, '#3b82f6', activePhase === 'RAF');
+                drawQueue('MACROTASK QUEUE (Low)', macroQueue, 20, 140, '#ef4444', activePhase === 'MACRO');
+
+                // Draw event loop wheel logo in center
+                const centerX = 290;
+                const centerY = 110;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, 15, 0, 2 * Math.PI);
+                ctx.strokeStyle = activePhase !== 'IDLE' ? '#3b82f6' : colorBorder;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = activePhase !== 'IDLE' ? '#3b82f6' : colorLabels;
+                ctx.font = '8px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('LOOP', centerX, centerY + 3);
+                ctx.textAlign = 'left';
+              }
+
+              // Watch for theme updates
+              const observer = new MutationObserver(() => draw());
+              observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+              draw();
+            })();
+          </script>
+
+          <hr>
+          <h2>Execution Examples: Test Your Intuition</h2>
+          <p>Let&#39;s look at some real examples to see this execution model in action.</p>
+          <h3>Example 1: The Classic Interview Riddle</h3>
+          <p>What is the console print order for the following code?</p>
+          <pre><code class="language-javascript">console.log(&quot;1. Start&quot;);
+
+setTimeout(() =&gt; {
+  console.log(&quot;2. setTimeout&quot;);
+}, 0);
+
+Promise.resolve().then(() =&gt; {
+  console.log(&quot;3. Promise&quot;);
+});
+
+console.log(&quot;4. End&quot;);
+</code></pre>
+          <h4><strong>How the Event Loop evaluates this</strong>:</h4>
+          <ol>
+            <li><strong>Synchronous Stack</strong>: Prints <code>1. Start</code> and <code>4. End</code>.</li>
+            <li><strong>Enqueued</strong>: <code>setTimeout</code> callback goes to the Macrotask Queue.
+              <code>Promise</code> callback goes to the Microtask Queue.
+            </li>
+            <li><strong>Microtask Phase</strong>: Call stack clears. The loop checks Microtasks first, finds the promise
+              callback, and prints <code>3. Promise</code>.</li>
+            <li><strong>Macrotask Phase</strong>: Microtask queue is empty. The loop moves to the Macrotask Queue, finds
+              the timer callback, and prints <code>2. setTimeout</code>.</li>
+          </ol>
+          <p><strong>Final Output</strong>:</p>
+          <pre><code>1. Start
+4. End
+3. Promise
+2. setTimeout
+</code></pre>
+          <hr>
+          <h3>Example 2: Nested Microtasks</h3>
+          <p>What happens when a Microtask schedules another Microtask?</p>
+          <pre><code class="language-javascript">console.log(&quot;1. Start&quot;);
+
+setTimeout(() =&gt; {
+  console.log(&quot;2. setTimeout&quot;);
+}, 0);
+
+Promise.resolve().then(() =&gt; {
+  console.log(&quot;3. Microtask A&quot;);
+  
+  Promise.resolve().then(() =&gt; {
+    console.log(&quot;4. Microtask B&quot;);
+  });
+});
+
+console.log(&quot;5. End&quot;);
+</code></pre>
+          <h4><strong>How the Event Loop evaluates this</strong>:</h4>
+          <ol>
+            <li>Prints <code>1. Start</code> and <code>5. End</code> synchronously.</li>
+            <li>The call stack clears, triggering the Microtask phase.</li>
+            <li><strong>Microtask A</strong> runs and prints <code>3. Microtask A</code>. During its run, it enqueues
+              <strong>Microtask B</strong>.
+            </li>
+            <li>The Event Loop checks if the Microtask queue is empty. It is <em>not</em> because Microtask B is now
+              sitting in it.</li>
+            <li>The loop immediately runs <strong>Microtask B</strong> and prints <code>4. Microtask B</code>.</li>
+            <li>Only when the Microtask queue is completely clear does the loop move to the Macrotask queue to run
+              <code>setTimeout</code>, printing <code>2. setTimeout</code>.
+            </li>
+          </ol>
+          <p><strong>Final Output</strong>:</p>
+          <pre><code>1. Start
+5. End
+3. Microtask A
+4. Microtask B
+2. setTimeout
+</code></pre>
+          <hr>
+          <h3>Example 3: The Infinite Loop Contrast</h3>
+          <p>What is the difference between a recursive <code>Promise</code> loop and a recursive
+            <code>setTimeout</code> loop?
+          </p>
+          <h4><strong>The Microtask Loop (Tab Crasher)</strong>:</h4>
+          <pre><code class="language-javascript">function loop() {
+  Promise.resolve().then(loop);
+}
+loop();
+</code></pre>
+          <ul>
+            <li><strong>Result</strong>: <strong>Freezes your browser tab.</strong> Because the Event Loop will not stop
+              until the Microtask queue is <em>completely</em> empty, calling <code>loop</code> recursively inside a
+              microtask constantly appends a new microtask. The Event Loop remains trapped in the microtask phase
+              forever. It never yields to the render phase or macrotask phase, making the tab unresponsive.</li>
+          </ul>
+          <h4><strong>The Macrotask Loop (Safe Loop)</strong>:</h4>
+          <pre><code class="language-javascript">function loop() {
+  setTimeout(loop, 0);
+}
+loop();
+</code></pre>
+          <ul>
+            <li><strong>Result</strong>: <strong>Runs forever without freezing the browser.</strong> Because the Event
+              Loop only executes <strong>one</strong> macrotask per tick, it will run <code>loop</code>, schedule a new
+              <code>setTimeout</code> in the macrotask queue, and then immediately check for microtasks and render
+              tasks. It yields control back to the browser to paint and respond to user actions before running the next
+              scheduled <code>setTimeout</code> frame.
+            </li>
+          </ul>
+          <hr>
+
+          <h3>Example 4: How <code>async/await</code> Maps to the Event Loop</h3>
+          <p>What happens when you use <code>async/await</code> instead of raw Promises?</p>
+          <pre><code class="language-javascript">async function fetchData() {
+  console.log("1. Before await");
+  const data = await Promise.resolve("done");
+  console.log("2. After await:", data);
+}
+
+console.log("3. Script start");
+fetchData();
+console.log("4. Script end");
+</code></pre>
+          <h4><strong>How the Event Loop evaluates this</strong>:</h4>
+          <p>Under the hood, <code>await</code> splits the function. Everything <em>before</em> the <code>await</code>
+            runs synchronously. Everything <em>after</em> the <code>await</code> is wrapped in a <code>.then()</code>
+            and pushed to the <strong>Microtask Queue</strong>.</p>
+          <p><strong>Final Output</strong>:</p>
+          <pre><code>3. Script start
+1. Before await
+4. Script end
+2. After await: done
+</code></pre>
+          <hr>
+
+          <h3>Example 5: Real-World UI Batching</h3>
+          <p>Why do we sometimes see loading states glitch or not appear at all if we block the thread?</p>
+          <pre><code class="language-javascript">button.addEventListener("click", () =&gt; {
+  // These 3 state changes happen synchronously
+  element.textContent = "Loading...";
+  element.style.opacity = "0.5";
+  element.classList.add("spinner");
+
+  // The browser hasn't painted yet!
+  // All 3 changes are batched into ONE repaint
+
+  Promise.resolve().then(() =&gt; {
+    console.log("Microtask: still no paint yet!");
+  });
+
+  // Paint happens AFTER this callback + microtasks finish
+});
+</code></pre>
+          <p>Because the click handler is a <strong>Macrotask</strong>, the browser executes the entire function, then
+            clears all <strong>Microtasks</strong>, and <em>only then</em> proceeds to the <strong>Render
+              Queue</strong>. It batches all DOM mutations together into a single repaint, preventing intermediate
+            flickering.</p>
+          <hr>
+
+          <h2>Summary</h2>
+          <p>Understanding the Event Loop is fundamentally about knowing how JavaScript schedules your code. To recap:
+          </p>
+          <ul>
+            <li><strong>The Call Stack</strong> executes synchronous code immediately.</li>
+            <li><strong>The Microtask Queue</strong> (<code>Promises</code>, <code>queueMicrotask</code>) runs as soon
+              as the stack clears, and <em>must</em> empty completely before anything else happens.</li>
+            <li><strong>The Render Queue</strong> (<code>requestAnimationFrame</code>, style recalculations) gives you a
+              chance to update the DOM right before the browser paints the next frame.</li>
+            <li><strong>The Macrotask Queue</strong> (<code>setTimeout</code>, clicks, network callbacks) runs exactly
+              one task per cycle, yielding control back to the browser to keep the UI responsive.</li>
+          </ul>
+          <p>The next time you encounter a cryptic rendering glitch or a frozen browser tab, remember: you're not just
+            writing code, you're negotiating with the Event Loop.</p>
+
+          <div class="post-navigation-placeholder"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top reveal">
+        <div class="footer-brand">
+          <span class="footer-col-label">#READY_TO_BUILD</span>
+          <h2>LET'S CREATE<br>TOGETHER.</h2>
+          <a href="mailto:manoj.mohandev@gmail.com" class="footer-link"
+            style="font-size: 1.5rem; color: var(--accent);">MANOJ.MOHANDEV@GMAIL.COM</a>
+        </div>
+        <div class="footer-nav">
+          <span class="footer-col-label">01 // EXPLORE</span>
+          <div class="footer-links">
+            <a href="../index.html" class="footer-link">HOME</a>
+            <a href="../projects.html" class="footer-link">PROJECTS</a>
+            <a href="../blog.html" class="footer-link">BLOG</a>
+            <a href="../certifications.html" class="footer-link">CREDENTIALS</a>
+            <a href="../resume.html" class="footer-link">RESUME</a>
+          </div>
+        </div>
+        <div class="footer-social">
+          <span class="footer-col-label">02 // CONNECT</span>
+          <div class="footer-links">
+            <a href="https://github.com/manojmohangit" target="_blank" class="footer-link">GITHUB</a>
+            <a href="https://www.linkedin.com/in/manumani07/" target="_blank" class="footer-link">LINKEDIN</a>
+            <a href="https://manojmohandev.medium.com/" target="_blank" class="footer-link">MEDIUM</a>
+            <a href="https://dev.to/manoj_004d" target="_blank" class="footer-link">DEV.TO</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 MANOJ MOHAN // BENGALURU, IN</span>
+        <span>Made with <span style="color: #ff4b4b;">❤️</span> <a href="https://manojmohan.dev" class="footer-link"
+            style="font-size: inherit; display: inline; text-decoration: none; border: none; padding: 0;">Manoj</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/script.min.js?v=1.1.0"></script>
+  <!-- Prism Syntax Highlighting JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script>
+    const prismTheme = document.getElementById('prism-theme');
+    const updatePrismTheme = () => {
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      prismTheme.href = isLight
+        ? "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css"
+        : "https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css";
+    };
+    updatePrismTheme();
+    const themeObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'data-theme') {
+          updatePrismTheme();
+        }
+      });
+    });
+    themeObserver.observe(document.documentElement, { attributes: true });
+  </script>
+  <script src="../assets/js/playground.min.js?v=1.1.1"></script>
+</body>
+
+</html>

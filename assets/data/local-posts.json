@@ -1,5 +1,19 @@
 [
   {
+    "title": "Visualizing the JS Event Loop: Microtasks, Macrotasks, and the Render Queue",
+    "date": "2026-07-17",
+    "dateStr": "JUL 17, 2026",
+    "excerpt": "Ever wonder why a Promise runs before a setTimeout? Stop guessing and master the JavaScript Event Loop with clear examples and a live interactive queue simulator.",
+    "link": "./blog/javascript-event-loop-microtasks.html",
+    "source": "DEV BLOG",
+    "tags": [
+      "JAVASCRIPT",
+      "ASYNCHRONOUS",
+      "PERFORMANCE",
+      "EVENT-LOOP"
+    ]
+  },
+  {
     "title": "Rendering 100k Rows: How Far Can the DOM Go? (Part 3: Canvas Grids)",
     "date": "2026-07-09",
     "dateStr": "JUL 09, 2026",

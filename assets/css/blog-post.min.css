@@ -90,7 +90,7 @@
     margin: 2rem 0;
 }
 .post-header {
-    padding-top: 15rem;
+    padding-top: 7rem;
 }
 .post-header .section-title {
     font-size: 3rem;
@@ -111,7 +111,7 @@
 /* Mobile Responsive Overrides */
 @media (max-width: 768px) {
     .post-header {
-        padding-top: 10rem;
+        padding-top: 4.5rem;
     }
     .post-header .section-title {
         font-size: 2rem;
