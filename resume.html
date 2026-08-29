@@ -60,14 +60,11 @@
         <section class="reveal">
             <h2>Professional Summary</h2>
             <div class="summary">
-                Senior Software Developer with over 8 years of experience building scalable web applications, JavaScript
-                libraries, WordPress plugins, and automation solutions. Proficient in JavaScript, TypeScript, Python,
-                React, and MySQL, with expertise in optimizing performance, designing intuitive APIs, and enhancing
-                security. Delivered impactful projects, including significant improvements in subscription renewals
-                through CRM automation and a substantial reduction in spam via Cloudflare-based security measures.
-                Skilled in full-stack development, UI design, and task automation using Bash and Git. Seeking a
-                challenging role to leverage analytical, coding, and debugging skills to drive innovation and growth
-                with cutting-edge web technologies.
+                Senior Software Engineer with 9+ years of experience building full-stack data platforms, high-throughput
+                backend services, and visualization engines using TypeScript, Python, and JavaScript. Architected
+                CanvasJS Chart Studio (a full-stack visual analytics IDE with Web Worker data processing), designed core
+                time-series charting APIs, and engineered resilient database replication and ETL pipelines with up to
+                90% latency reduction.
             </div>
         </section>
 
@@ -92,14 +89,16 @@
         <section class="reveal">
             <h2>Skills</h2>
             <div class="skills-grid">
-                <p><span class="skills-category">Programming Languages:</span> JavaScript, TypeScript, Python, Bash, PHP
-                </p>
-                <p><span class="skills-category">Tech Stacks:</span> MERN (MongoDB, Express.js, React, Node.js), LAMP
-                    (Linux, Apache, MySQL, PHP), Flask</p>
-                <p><span class="skills-category">Libraries:</span> CanvasJS, CodeMirror, Sass, Bootstrap</p>
-                <p><span class="skills-category">Databases:</span> MySQL, Postgres</p>
-                <p><span class="skills-category">Tools & Technologies:</span> Git, Grunt, Webpack, HyperV, Docker,
-                    Ubuntu CLI, Github Actions</p>
+                <p><span class="skills-category">Programming Languages:</span> Python, TypeScript, JavaScript, SQL,
+                    Bash, PHP</p>
+                <p><span class="skills-category">Data & Backend Engineering:</span> Data Pipelines & ETL, REST APIs,
+                    Node.js, Express, Flask, Prisma, Microservices</p>
+                <p><span class="skills-category">Databases & Storage:</span> MySQL (Master-Slave Replication),
+                    PostgreSQL, SQLite, Redis, MongoDB</p>
+                <p><span class="skills-category">Libraries & Frontend:</span> CanvasJS, React, Zustand, TanStack
+                    Virtual/Table, Angular, Vue, CodeMirror</p>
+                <p><span class="skills-category">Tools & Infrastructure:</span> Docker, Linux/Ubuntu CLI, Git, GitHub
+                    Actions, Cloudflare, Webpack, Vite</p>
             </div>
         </section>
 
@@ -107,129 +106,109 @@
             <h2>Projects</h2>
 
             <div class="project-item">
-                <div class="item-header">Chart Studio</div>
+                <div class="item-header">CanvasJS Chart Studio</div>
                 <ul>
-                    <li>Developed a low-code visualization platform that bridges the gap between designers and developers, reducing time-to-market for complex dashboards from days to minutes.</li>
-                    <li>Replaced manual chart coding with a schema-driven visual editor featuring real-time data transformations (sampling, aggregation) and smart styling inheritance for synchronized StockCharts.</li>
-                    <li>Enabled instant export of optimized, production-ready HTML and JSON configs, eliminating styling discrepancies and development bottlenecks.</li>
+                    <li>Architected a full-stack, browser-based visual data platform and chart authoring IDE using React
+                        19, TypeScript, Zustand, and an Express/Prisma backend.</li>
+                    <li>Engineered multi-threaded Web Worker data pipelines for real-time ingestion (REST APIs, CSV,
+                        Excel, Google Sheets), client-side transformations (downsampling, time-series aggregation,
+                        trendline regression), and background GZip serialization for 50k+ row datasets.</li>
+                    <li>Built a virtualized data workbench with TanStack Virtual and a schema-driven property engine
+                        featuring fuzzy search across 100+ chart configuration properties and multi-panel StockCharts.
+                    </li>
+                    <li>Developed an automated export engine that generates standalone, production-ready HTML/JS
+                        artifacts with self-contained runtimes, live polling scripts, and dynamic interactivity.</li>
                 </ul>
             </div>
 
             <div class="project-item">
-                <div class="item-header">CanvasJS Chart & StockChart Component for React, Angular and Vue</div>
+                <div class="item-header">CanvasJS StockChart API & Financial Data Engine</div>
                 <ul>
-                    <li>Developed and optimized scalable, reusable CanvasJS chart components for React, Angular, and Vue
-                        with a modular architecture, enhancing maintainability and consistent performance.</li>
-                    <li>Implemented framework-specific best practices to ensure smooth rendering, high responsiveness
-                        with large datasets, and efficient cross-framework support.</li>
+                    <li>Designed and developed the CanvasJS StockChart API for multi-pane financial time-series
+                        visualization using JavaScript and TypeScript.</li>
+                    <li>Engineered synchronized event dispatchers for crosshairs, tooltips, and range navigators,
+                        maintaining 60 FPS interactions across 100k+ data points.</li>
                 </ul>
             </div>
 
             <div class="project-item">
-                <div class="item-header">CanvasJS StockChart API</div>
+                <div class="item-header">CanvasJS Framework Adapters (React, Angular, Vue)</div>
                 <ul>
-                    <li>Drove the end-to-end development of the CanvasJS StockChart API, designing an event-driven
-                        system to power interactive and high-performance financial data visualizations.</li>
-                    <li>Engineered synchronized tooltips and crosshairs for multi-chart visualization, significantly
-                        enhancing data comparison capabilities and improving user data analysis efficiency by 10%.</li>
+                    <li>Authored and maintained official wrapper libraries for React, Angular, and Vue with modular
+                        architectures for seamless framework integration.</li>
+                    <li>Managed component lifecycles to eliminate memory leaks and avoid redundant re-renders during
+                        high-frequency data streaming.</li>
                 </ul>
             </div>
 
             <div class="project-item">
-                <div class="item-header">Website Redesign</div>
+                <div class="item-header">Network Security & Threat Monitoring Service</div>
                 <ul>
-                    <li>Led a cross-functional team in the comprehensive redesign of the CanvasJS website, ensuring
-                        modern design principles, enhanced user experience, and robust web accessibility standards
-                        (WCAG) for improved site usability and compliance.</li>
-                    <li>Achieved a 90% improvement in website load time by implementing advanced performance
-                        optimization techniques, including critical path rendering and offloading non-critical processes
-                        below the fold.</li>
+                    <li>Built a Python-based automated monitoring and threat detection service that parsed live server
+                        access logs to identify anomalous traffic patterns.</li>
+                    <li>Integrated real-time Cloudflare API rules and Linux iptables to mitigate malicious bots,
+                        reducing spam and unwanted traffic by 95%.</li>
                 </ul>
             </div>
 
             <div class="project-item">
-                <div class="item-header">Subscription & Download Plugin</div>
+                <div class="item-header">Database Replication & Backup Infrastructure</div>
                 <ul>
-                    <li>Engineered a secure WordPress subscription and download plugin using PHP and MySQL, implementing
-                        robust authentication and authorization mechanisms to enforce business license requirements and
-                        integrated Cloudflare for advanced spam prevention.</li>
-                    <li>Optimized the business workflow for subscription renewals by designing and implementing a custom
-                        WordPress plugin that seamlessly integrated Hubspot and Agile CRM, resulting in an improvement
-                        of over 60% in renewal rates.</li>
+                    <li>Configured MySQL master-slave replication and automated failover scripts in Bash and Python to
+                        ensure continuous data synchronization.</li>
+                    <li>Automated incremental backup pipelines and data integrity checks on Ubuntu servers, reducing
+                        recovery downtime by 90%.</li>
                 </ul>
             </div>
 
             <div class="project-item">
-                <div class="item-header">PDF Invoice Plugin</div>
+                <div class="item-header">SEO Auditor & Web Scraper Tool</div>
                 <ul>
-                    <li>Engineered a custom WordPress Invoice plugin to fully automate secure PDF invoice generation
-                        using mPDF, integrating seamless email delivery and dedicated customer account page access.</li>
-                    <li>Eliminated the need for external licensing and provided greater control over the invoicing
-                        process.</li>
+                    <li>Developed an internal site auditor and crawler in Python (Flask) and Node.js to traverse routes,
+                        inspect DOM trees, and extract broken links, redirect loops, and metadata issues.</li>
+                    <li>Automated diagnostic reporting for technical SEO, cutting manual audit time by over 70%.</li>
                 </ul>
             </div>
 
             <div class="project-item">
-                <div class="item-header">Backup Design & Architecture</div>
+                <div class="item-header">CRM Sync & Subscription Workflow Engine</div>
                 <ul>
-                    <li>Engineered and deployed a robust backup server solution on Ubuntu, leveraging MySQL master-slave
-                        replication and Bash scripting to ensure continuous data synchronization, reducing potential
-                        downtime by 90%.</li>
-                    <li>Fortified data availability to 99.9% through NFTables firewall rules and SSH restrictions.</li>
+                    <li>Engineered background data synchronization pipelines connecting internal billing databases with
+                        HubSpot and Agile CRM.</li>
+                    <li>Automated customer license provisioning and renewal reminder workflows, resulting in a 60%
+                        increase in subscription renewals.</li>
                 </ul>
             </div>
 
             <div class="project-item">
-                <div class="item-header">Code Editor</div>
+                <div class="item-header">Web Performance & Asset Pipeline Optimization</div>
                 <ul>
-                    <li>Developed an interactive HTML code editor leveraging CodeMirror and JavaScript, featuring a live
-                        preview via iframe for an instant edit-and-view experience.</li>
-                    <li>Enhanced user engagement by 10% through one-click copy/download functionalities and seamless
-                        JSFiddle integration.</li>
-                </ul>
-            </div>
-
-            <div class="project-item">
-                <div class="item-header">Network Security & Threat Mitigation</div>
-                <ul>
-                    <li>Designed and implemented a multi-layered spam prevention system leveraging Cloudflare CDN,
-                        intelligent rate limiting, and robust iptables firewall rules.</li>
-                    <li>Developed a Python-based in-house monitoring solution resulting in a 95% reduction in spam
-                        incidents.</li>
-                </ul>
-            </div>
-
-            <div class="project-item">
-                <div class="item-header">SEO Auditor Tool</div>
-                <ul>
-                    <li>Developed an in-house SEO Auditor Tool using Flask and Express.js, identifying issues like
-                        broken links and missing meta tags, improving SEO compliance by 70%.</li>
+                    <li>Re-architected core web properties with modern bundling pipelines, critical-path CSS rendering,
+                        and deferred asset loading.</li>
+                    <li>Reduced initial page load times by 90% and improved Core Web Vitals compliance.</li>
                 </ul>
             </div>
         </section>
 
-        <section class="reveal">
+        <section class="reveal education-section">
             <h2>Education</h2>
-            <div class="experience-item">
+            <div class="education-item">
                 <div class="item-header">
-                    <span>B.E. IN COMPUTER SCIENCE</span>
-                    <span>2012-2016</span>
+                    <span>B.E. in Computer Science &mdash; RNSIT, Bengaluru (74.2%)</span>
+                    <span>2012 &ndash; 2016</span>
                 </div>
-                <div class="item-subtitle">RNSIT, BENGALURU | 74.2%</div>
             </div>
-            <div class="experience-item">
+            <div class="education-item">
                 <div class="item-header">
-                    <span>HSC, CBSE</span>
+                    <span>Senior Secondary (CBSE, Class XII) &mdash; Holy Cross, Raipur (83.4%)</span>
                     <span>2012</span>
                 </div>
-                <div class="item-subtitle">HOLY CROSS, RAIPUR (C.G.) | 83.4%</div>
             </div>
-            <div class="experience-item">
+            <div class="education-item">
                 <div class="item-header">
-                    <span>SSC, CGBSE</span>
+                    <span>Secondary School (CGBSE, Class X) &mdash; Adarsh Vidhyalaya, Raipur (92.8%)</span>
                     <span>2010</span>
                 </div>
-                <div class="item-subtitle">ADARSH VIDHYALAYA, RAIPUR (C.G.) | 92.83%</div>
             </div>
         </section>
     </div>

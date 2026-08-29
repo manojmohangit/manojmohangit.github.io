@@ -84,6 +84,14 @@ h2 {
     margin-bottom: 15px;
 }
 
+.education-item {
+    margin-bottom: 8px;
+}
+
+.education-item:last-child {
+    margin-bottom: 0;
+}
+
 .item-header {
     display: flex;
     justify-content: space-between;
@@ -121,38 +129,86 @@ li {
 }
 
 @page {
-    margin: 0;
-    /* Removes browser-added headers and footers (date, URL, etc.) */
+  size: A4 portrait;
+  margin: 10mm 12mm; /* Clean page margins for 2-page print layout */
 }
 
 @media print {
-    body {
-        padding: 0;
-        margin: 0;
-    }
+  body {
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 9.5pt;
+    line-height: 1.35;
+  }
 
-    .no-print,
-    .nav,
-    .bg-grid-overlay,
-    .export-btn {
-        display: none !important;
-    }
+  .no-print,
+  .nav,
+  .bg-grid-overlay,
+  .export-btn {
+    display: none !important;
+  }
 
-    .resume-paper {
-        box-shadow: none;
-        margin: 0 !important;
-        padding: 15mm 20mm !important;
-        /* Standard resume margins on the paper itself */
-        width: 100%;
-        border-radius: 0;
-    }
+  .resume-paper {
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+    border-radius: 0 !important;
+    width: 100% !important;
+  }
 
-    .reveal {
-        opacity: 1 !important;
-        visibility: visible !important;
-        transform: none !important;
-        transition: none !important;
-    }
+  section {
+    margin-bottom: 15px !important;
+  }
+
+  h2 {
+    font-size: 13pt !important;
+    margin-bottom: 8px !important;
+    padding-bottom: 3px !important;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  .experience-item,
+  .project-item {
+    margin-bottom: 10px !important;
+  }
+
+  .education-item {
+    margin-bottom: 4px !important;
+  }
+
+  ul {
+    margin-left: 18px !important;
+  }
+
+  li {
+    margin-bottom: 2.5px !important;
+  }
+
+  /* Prevent elements from being sliced mid-sentence across page splits */
+  .experience-item,
+  .project-item,
+  .education-item,
+  .education-section,
+  .skills-grid {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Keep links readable on physical exports without blue default underlines */
+  .header-right a {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }
 
 .resume-paper {
